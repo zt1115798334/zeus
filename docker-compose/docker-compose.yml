@@ -1,0 +1,53 @@
+version: '2.0'
+services:
+  rabbitmq-master:
+    hostname: rabbitmq-master
+    container_name: rabbitmq-master
+    image: rabbitmq:management
+    ports:
+#      - "4369:4369"
+#      - "5671:5671"
+      - "5672:5672"
+      - "15671:15671"
+      - "15672:15672"
+      - "25672:25672"
+    volumes:
+      #      - /etc/localtime:/etc/localtime
+      - ./rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/conf.d/rabbitmq.conf
+#      - ./rabbitmq/cookie/erlang.cookie:/var/lib/rabbitmq/.erlang.cookie
+  zeus-eureka-1:
+    hostname: zeus-eureka-1
+    container_name: zeus-eureka-1
+    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-eureka
+    environment:
+      - SPRING_PROFILES_ACTIVE=zeus-eureka-1
+      - ZEUS_EUREKA_HOST_1=zeus-eureka-1
+      - ZEUS_EUREKA_HOST_2=zeus-eureka-2
+    ports:
+      - 8761:8761
+  zeus-eureka-2:
+    hostname: zeus-eureka-2
+    container_name: zeus-eureka-2
+    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-eureka
+    environment:
+      - SPRING_PROFILES_ACTIVE=zeus-eureka-2
+      - ZEUS_EUREKA_HOST_1=zeus-eureka-1
+      - ZEUS_EUREKA_HOST_2=zeus-eureka-2
+    ports:
+      - 8762:8762
+  zeus-admin:
+    hostname: zeus-admin
+    container_name: zeus-admin
+    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-admin
+    ports:
+    - 8089:8089
+    environment:
+      - ZEUS_EUREKA_HOST_1=zeus-eureka-1
+      - ZEUS_EUREKA_HOST_2=zeus-eureka-2
+  zeus-config:
+    hostname: zeus-config
+    container_name: zeus-config
+    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-config
+    environment:
+      - ZEUS_EUREKA_HOST_1=zeus-eureka-1
+      - ZEUS_EUREKA_HOST_2=zeus-eureka-2

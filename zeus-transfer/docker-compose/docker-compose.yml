@@ -1,0 +1,32 @@
+version: '3'
+services:
+  zeus-transfer:
+    container_name: zeus-transfer
+    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-transfer:latest
+    ports:
+      - '8898:8080'
+    volumes:
+      - ./zeus-transfer/data/log:/log:rw
+      - /etc/localtime:/etc/localtime:ro
+      - /logs/:/logs/:rw
+    env_file:
+      - zeus-transfer/env/zeus-transfer.env
+    depends_on:
+      - mysql-zeus-transfer
+    environment:
+      - ZEUS_EUREKA_HOST_1=zeus-eureka-1
+      - ZEUS_EUREKA_HOST_2=zeus-eureka-2
+  mysql-zeus-transfer:
+    container_name: mysql-zeus-transfer
+    image: mysql:8.0.23
+    env_file:
+      - mysql-zeus-transfer/env/mysql.env
+    volumes:
+      - ./mysql-zeus-transfer/db:/var/lib/mysql
+      - ./mysql-zeus-transfer/conf:/etc/mysql/conf.d
+      - ./mysql-zeus-transfer/logs:/logs
+      - ./mysql-zeus-transfer/init/:/docker-entrypoint-initdb.d/
+      - /etc/localtime:/etc/localtime:rw
+    ports:
+      - '3307:3306'
+

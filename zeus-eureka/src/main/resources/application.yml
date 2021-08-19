@@ -1,0 +1,71 @@
+spring:
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:zeus-eureka-1}
+---
+server:
+  port: 8761
+spring:
+  application:
+    name: zeus-eureka
+  security:
+    user:
+      name: admin
+      password: admin
+      roles: USER
+  config:
+    activate:
+      on-profile: zeus-eureka-1
+eureka:
+  instance:
+    hostname: zeus-eureka-1
+    prefer-ip-address: true
+    instance-id: zeus-eureka-1
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://admin:admin@${ZEUS_EUREKA_HOST_1:127.0.0.1}:8761/eureka,http://admin:admin@${ZEUS_EUREKA_HOST_2:127.0.0.1}:8762/eureka
+  server:
+    enable-self-preservation: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+---
+server:
+  port: 8762
+spring:
+  application:
+    name: zeus-eureka
+  security:
+    user:
+      name: admin
+      password: admin
+      roles: USER
+  config:
+    activate:
+      on-profile: zeus-eureka-2
+eureka:
+  instance:
+    hostname: zeus-eureka-2
+    prefer-ip-address: true
+    instance-id: zeus-eureka-2
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://admin:admin@${ZEUS_EUREKA_HOST_1:127.0.0.1}:8761/eureka,http://admin:admin@${ZEUS_EUREKA_HOST_2:127.0.0.1}:8762/eureka
+  server:
+    enable-self-preservation: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

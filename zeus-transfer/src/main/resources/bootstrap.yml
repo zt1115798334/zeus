@@ -1,0 +1,21 @@
+#开始使用 nacos 注册中心
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://admin:admin@${ZEUS_EUREKA_HOST_1:127.0.0.1}:8761/eureka,http://admin:admin@${ZEUS_EUREKA_HOST_2:127.0.0.1}:8762/eureka
+  instance:
+    prefer-ip-address: true
+    instance-id: zeus-transfer
+    lease-expiration-duration-in-seconds: 5
+    lease-renewal-interval-in-seconds: 2
+spring:
+  cloud:
+    config:
+      name: zeus # 对应 {application} 部分
+      profile: tsgz
+      label: master # 对应 {label} 部分，即 Git 的分支。如果配置中心使用的是本地存储，则该参数无用
+      discovery:
+        enabled: true
+        service-id: zeus-config

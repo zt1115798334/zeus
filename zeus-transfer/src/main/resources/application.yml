@@ -1,0 +1,50 @@
+server:
+  port: 8898
+spring:
+  application:
+    name: zeus-transfer
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    url: jdbc:mysql://${SPRING_DATASOURCE_URL:127.0.0.1}:3306/pull-push?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&&serverTimezone=UTC
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:root}
+    hikari:
+      connection-timeout: 30000
+      max-lifetime: 1800000
+  jpa:
+    database: MYSQL
+    hibernate:
+      ddl-auto: none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    show-sql: false
+    open-in-view: false
+  quartz:
+    #相关属性配置
+    properties:
+      org:
+        quartz:
+          scheduler:
+            instanceName: clusteredScheduler
+            instanceId: AUTO
+          threadPool:
+            class: org.quartz.simpl.SimpleThreadPool
+            threadCount: 10
+            threadPriority: 5
+            threadsInheritContextClassLoaderOfInitializingThread: true
+    job-store-type: MEMORY
+  security:
+    user:
+      name: admin #账号
+      password: admin  #密码
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+logging:
+  file:
+    name: /logs/${spring.application.name}/${spring.application.name}.log
