@@ -13,10 +13,10 @@ spring:
           search-paths: repo
           default-label: master
   rabbitmq:
-    host: 127.0.0.1
+    host: ${SPRING_RABBITMQ_HOST:127.0.0.1}
     port: 5672
-    username: admin
-    password: admin
+    username: ${SPRING_RABBITMQ_USERNAME:admin}
+    password: ${SPRING_RABBITMQ_PASSWORD:admin}
     virtual-host: zeus
 eureka:
   client:
@@ -29,6 +29,7 @@ eureka:
     instance-id: zeus-config
     lease-expiration-duration-in-seconds: 5
     lease-renewal-interval-in-seconds: 2
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
 management:
   endpoints:
     web:

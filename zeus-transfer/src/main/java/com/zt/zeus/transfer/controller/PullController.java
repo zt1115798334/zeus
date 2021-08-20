@@ -49,9 +49,9 @@ public class PullController extends BaseResultMessage {
 
     @ApiOperation("通过自定义词拉取数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true)
+            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true,dataTypeClass = StorageMode.class)
     })
     @GetMapping("pullArticleOfCustomWords")
     public ResultMessage pullArticleOfCustomWords(@DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
@@ -69,10 +69,10 @@ public class PullController extends BaseResultMessage {
 
     @ApiOperation("通过搜索词拉取数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true),
-            @ApiImplicitParam(name = "queryWords", value = "搜索词", required = true)
+            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true,dataTypeClass = StorageMode.class),
+            @ApiImplicitParam(name = "queryWords", value = "搜索词", required = true,dataTypeClass = List.class)
     })
     @PostMapping("pullArticleOfQueryWords")
     public ResultMessage pullArticleOfQueryWords(@DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
@@ -93,10 +93,10 @@ public class PullController extends BaseResultMessage {
 
     @ApiOperation("通过采集词拉取数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true),
-            @ApiImplicitParam(name = "status", value = "状态", required = true),
+            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true,dataTypeClass = StorageMode.class),
+            @ApiImplicitParam(name = "status", value = "状态", required = true,dataTypeClass = Boolean.class),
     })
     @GetMapping("pullArticleOfGatherWords")
     public ResultMessage pullArticleOfGatherWords(@DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
@@ -116,9 +116,9 @@ public class PullController extends BaseResultMessage {
 
     @ApiOperation("通过自定义作者拉取数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true)
+            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true,dataTypeClass = StorageMode.class)
     })
     @GetMapping("pullArticleOfCustomAuthors")
     public ResultMessage pullArticleOfCustomAuthors(@DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
@@ -136,9 +136,9 @@ public class PullController extends BaseResultMessage {
 
     @ApiOperation("通过采集作者拉取数据")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true),
-            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true)
+            @ApiImplicitParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true,dataTypeClass = LocalDate.class),
+            @ApiImplicitParam(name = "storageMode", value = "存储项", required = true,dataTypeClass = StorageMode.class)
     })
     @GetMapping("pullArticleOfGatherAuthors")
     public ResultMessage pullArticleOfGatherAuthors(@DateTimeFormat(pattern = DateUtils.DATE_FORMAT)

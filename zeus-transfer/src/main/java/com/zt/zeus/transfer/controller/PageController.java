@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PageController {
 
-//    @GetMapping("/")
-//    public String index() {
-//        return "redirect:/swagger-ui/index.html";
-//    }
+    @GetMapping("/")
+    public String index() {
+        return "redirect:/swagger-ui/index.html";
+    }
 }

@@ -10,11 +10,12 @@ eureka:
     instance-id: zeus-transfer
     lease-expiration-duration-in-seconds: 5
     lease-renewal-interval-in-seconds: 2
+    ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
 spring:
   cloud:
     config:
-      name: zeus # 对应 {application} 部分
-      profile: tsgz
+      name: ${SPRING_CLOUD_CONFIG_NAME:zeus} # 对应 {application} 部分
+      profile: ${SPRING_CLOUD_CONFIG_PROFILE:default}
       label: master # 对应 {label} 部分，即 Git 的分支。如果配置中心使用的是本地存储，则该参数无用
       discovery:
         enabled: true

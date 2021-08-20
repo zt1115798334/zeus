@@ -1,8 +1,8 @@
 version: '2.0'
 services:
-  rabbitmq-master:
-    hostname: rabbitmq-master
-    container_name: rabbitmq-master
+  rabbitmq:
+    hostname: rabbitmq
+    container_name: rabbitmq
     image: rabbitmq:management
     ports:
 #      - "4369:4369"
@@ -40,7 +40,7 @@ services:
     container_name: zeus-admin
     image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-admin
     ports:
-    - 8089:8089
+    - 8781:8781
     environment:
       - ZEUS_EUREKA_HOST_1=zeus-eureka-1
       - ZEUS_EUREKA_HOST_2=zeus-eureka-2
@@ -51,3 +51,8 @@ services:
     environment:
       - ZEUS_EUREKA_HOST_1=zeus-eureka-1
       - ZEUS_EUREKA_HOST_2=zeus-eureka-2
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_USERNAME=admin
+      - SPRING_RABBITMQ_PASSWORD=admin
+    depends_on:
+      - rabbitmq
