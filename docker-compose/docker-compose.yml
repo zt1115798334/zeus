@@ -44,6 +44,10 @@ services:
     environment:
       - ZEUS_EUREKA_HOST_1=zeus-eureka-1
       - ZEUS_EUREKA_HOST_2=zeus-eureka-2
+      - EUREKA_INSTANCE_IP_ADDRESS=127.0.0.1
+    depends_on:
+      - zeus-eureka-1
+      - zeus-eureka-2
   zeus-config:
     hostname: zeus-config
     container_name: zeus-config
@@ -51,8 +55,14 @@ services:
     environment:
       - ZEUS_EUREKA_HOST_1=zeus-eureka-1
       - ZEUS_EUREKA_HOST_2=zeus-eureka-2
+      - EUREKA_INSTANCE_IP_ADDRESS=127.0.0.1
       - SPRING_RABBITMQ_HOST=rabbitmq
       - SPRING_RABBITMQ_USERNAME=admin
       - SPRING_RABBITMQ_PASSWORD=admin
+      - SPRING_PROFILES_ACTIVE=git
+    ports:
+      - 8771:8771
     depends_on:
       - rabbitmq
+      - zeus-eureka-1
+      - zeus-eureka-2

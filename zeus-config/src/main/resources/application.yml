@@ -3,21 +3,14 @@ server:
 spring:
   application:
     name: zeus-config
-  cloud:
-    config:
-      server:
-        git:
-          uri: https://gitee.com/lollipopDevil/zeus-config.git # 配置git仓库的地址
-          username: zhangtong9498@qq.com
-          password: devil1994
-          search-paths: repo
-          default-label: master
   rabbitmq:
     host: ${SPRING_RABBITMQ_HOST:127.0.0.1}
     port: 5672
     username: ${SPRING_RABBITMQ_USERNAME:admin}
     password: ${SPRING_RABBITMQ_PASSWORD:admin}
     virtual-host: zeus
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:native,local}
 eureka:
   client:
     register-with-eureka: true
@@ -35,4 +28,29 @@ management:
     web:
       exposure:
         include: bus-refresh
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:///D:/config
+---
+spring:
+  config:
+    activate:
+      on-profile: git
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://gitee.com/lollipopDevil/zeus-config.git # 配置git仓库的地址
+          username: zhangtong9498@qq.com
+          password: devil1994
+          search-paths: repo
+          default-label: master
+
 

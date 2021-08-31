@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@RefreshScope
 @Getter
 @Setter
 @Component

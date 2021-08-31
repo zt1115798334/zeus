@@ -61,7 +61,6 @@ public class HttpClientUtils {
 
     }
 
-
     private static volatile HttpClientUtils INSTANCE = new HttpClientUtils();
     /**
      * 最大尝试次数
@@ -120,7 +119,7 @@ public class HttpClientUtils {
         } finally {
             close(response);
             close(httpClient);
-            log.info("Request URL：{},响应时间：{}", url, (System.currentTimeMillis() - startTime));
+            log.debug("Request URL：{},响应时间：{}", url, (System.currentTimeMillis() - startTime));
         }
     }
 
@@ -162,8 +161,8 @@ public class HttpClientUtils {
     private String httpRequest(String url, Map<String, String> headerMap, Map<String, Object> paramMap, Charset charset, int reTry, HttpMethod httpMethod, String mediaType) {
         long startTime = System.currentTimeMillis();
         String paramJson = JSONObject.parseObject(JSON.toJSONString(paramMap, SerializerFeature.DisableCircularReferenceDetect)).toJSONString();
-//        log.info("请求URl：{},请求Method：{},请求头：{}，请求内容：{}", url, httpMethod.toString(), headerMap, paramJson.length() > 100 ? "" : paramJson);
-        log.info("请求URl：{},请求Method：{},请求头：{}，请求内容：{}", url, httpMethod.toString(), headerMap, paramJson.length() > 1000 ? "" : paramJson);
+        log.info("请求URl：{}", url);
+        log.debug("请求URl：{},请求Method：{},请求头：{}，请求内容：{}", url, httpMethod.toString(), headerMap, paramJson);
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         String result = null;
@@ -189,7 +188,7 @@ public class HttpClientUtils {
                 long executeStartTime = System.currentTimeMillis();
                 // 执行请求访问
                 response = httpClient.execute(httpPost);
-//                log.info("执行请求响应时间：{}", (System.currentTimeMillis() - executeStartTime));
+                log.debug("执行请求响应时间：{}", (System.currentTimeMillis() - executeStartTime));
             }
             if (response != null) {
                 int statusCode = response.getStatusLine().getStatusCode();
@@ -198,7 +197,7 @@ public class HttpClientUtils {
                     if (entity != null) {
                         result = EntityUtils.toString(entity, charset);
                     }
-//                    log.info("返回结果为：{}", result);
+                    log.debug("返回结果为：{}", result);
                 } else if (statusCode == HttpStatus.SC_MOVED_TEMPORARILY) {
                     log.error("访问地址已经改变请更新访问地址");
                 } else {
@@ -219,7 +218,7 @@ public class HttpClientUtils {
         } finally {
             close(response);
             close(httpClient);
-//            log.info("Request URL：{},响应时间：{}", url, (System.currentTimeMillis() - startTime));
+            log.debug("Request URL：{},响应时间：{}", url, (System.currentTimeMillis() - startTime));
         }
         return result;
     }
@@ -227,7 +226,8 @@ public class HttpClientUtils {
     private void httpRequestDownFile(String url, Map<String, String> headerMap, Map<String, Object> paramMap, OutputStream out) {
         long startTime = System.currentTimeMillis();
         String paramJson = JSONObject.parseObject(JSON.toJSONString(paramMap, SerializerFeature.DisableCircularReferenceDetect)).toJSONString();
-        log.info("请求URl：{},请求头：{}，请求内容：{}", url, headerMap, paramJson);
+        log.info("请求URl：{}", url);
+        log.debug("请求URl：{},请求头：{}，请求内容：{}", url, headerMap, paramJson);
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
         try {
@@ -259,14 +259,15 @@ public class HttpClientUtils {
         } finally {
             close(response);
             close(httpClient);
-            log.info("响应时间：{}", (System.currentTimeMillis() - startTime));
+            log.debug("响应时间：{}", (System.currentTimeMillis() - startTime));
         }
     }
 
     private String httpRequestUploadFile(String url, Map<String, String> headerMap, Map<String, Object> paramMap, HttpServletRequest request, List<MultipartFile> multipartFiles) {
         Charset charset = StandardCharsets.UTF_8;
         String paramJson = JSONObject.parseObject(JSON.toJSONString(paramMap, SerializerFeature.DisableCircularReferenceDetect)).toJSONString();
-        log.info("请求URl：{},请求Method：{},请求头：{}，请求内容：{}", url, HttpMethod.POST.toString(), headerMap, paramJson);
+        log.info("请求URl：{}", url);
+        log.debug("请求URl：{},请求Method：{},请求头：{}，请求内容：{}", url, HttpMethod.POST, headerMap, paramJson);
         // 创建一个通用的多部分解析器
         long startTime = System.currentTimeMillis();
         CloseableHttpClient httpClient = null;
@@ -305,7 +306,7 @@ public class HttpClientUtils {
         } finally {
             close(response);
             close(httpClient);
-            log.info("响应时间：{}", (System.currentTimeMillis() - startTime));
+            log.debug("响应时间：{}", (System.currentTimeMillis() - startTime));
         }
         return result;
     }

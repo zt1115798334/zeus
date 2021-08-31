@@ -4,9 +4,9 @@ import com.google.common.collect.Lists;
 import com.zt.zeus.transfer.enums.JobType;
 import com.zt.zeus.transfer.properties.QuartzProperties;
 import com.zt.zeus.transfer.quartz.job.*;
+import com.zt.zeus.transfer.quartz.listener.SimpleJobListener;
 import org.quartz.JobDetail;
 import org.quartz.Trigger;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
@@ -24,7 +24,6 @@ public class QuartzConfig {
 
 
     @Bean(name = "syncPullArticleOfCustomAuthorJobDetail")
-    @RefreshScope
     public MethodInvokingJobDetailFactoryBean syncPullArticleOfCustomAuthorJobDetail(SyncPullArticleOfCustomAuthorJob syncPullArticleOfCustomAuthorJob) {
         MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
         // 是否并发执行
@@ -37,7 +36,6 @@ public class QuartzConfig {
     }
 
     @Bean(name = "syncPullArticleOfCustomAuthorTrigger")
-    @RefreshScope
     public CronTriggerFactoryBean syncPullArticleOfCustomAuthorTrigger(JobDetail syncPullArticleOfCustomAuthorJobDetail) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         // 设置jobDetail
@@ -51,7 +49,6 @@ public class QuartzConfig {
 
 
     @Bean(name = "syncPullArticleOfCustomWordJobDetail")
-    @RefreshScope
     public MethodInvokingJobDetailFactoryBean syncPullArticleOfCustomWordJobDetail(SyncPullArticleOfCustomWordJob syncPullArticleOfCustomWordJob) {
         MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
         // 是否并发执行
@@ -64,7 +61,6 @@ public class QuartzConfig {
     }
 
     @Bean(name = "syncPullArticleOfCustomWordTrigger")
-    @RefreshScope
     public CronTriggerFactoryBean syncPullArticleOfCustomWordTrigger(JobDetail syncPullArticleOfCustomWordJobDetail) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         // 设置jobDetail
@@ -78,7 +74,6 @@ public class QuartzConfig {
 
 
     @Bean(name = "syncPullArticleOfGatherAuthorJobDetail")
-    @RefreshScope
     public MethodInvokingJobDetailFactoryBean syncPullArticleOfGatherAuthorJobDetail(SyncPullArticleOfGatherAuthorJob syncPullArticleOfGatherAuthorJob) {
         MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
         // 是否并发执行
@@ -91,7 +86,6 @@ public class QuartzConfig {
     }
 
     @Bean(name = "syncPullArticleOfGatherAuthorTrigger")
-    @RefreshScope
     public CronTriggerFactoryBean syncPullArticleOfGatherAuthorTrigger(JobDetail syncPullArticleOfGatherAuthorJobDetail) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         // 设置jobDetail
@@ -105,7 +99,6 @@ public class QuartzConfig {
 
 
     @Bean(name = "syncPullArticleOfGatherWordJobDetail")
-    @RefreshScope
     public MethodInvokingJobDetailFactoryBean syncPullArticleOfGatherWordJobDetail(SyncPullArticleOfGatherWordJob syncPullArticleOfGatherWordJob) {
         MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
         // 是否并发执行
@@ -118,7 +111,6 @@ public class QuartzConfig {
     }
 
     @Bean(name = "syncPullArticleOfGatherWordTrigger")
-    @RefreshScope
     public CronTriggerFactoryBean syncPullArticleOfGatherWordTrigger(JobDetail syncPullArticleOfGatherWordJobDetail) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         // 设置jobDetail
@@ -132,7 +124,6 @@ public class QuartzConfig {
 
 
     @Bean(name = "syncPushArticleJobDetail")
-    @RefreshScope
     public MethodInvokingJobDetailFactoryBean syncPushArticleJobDetail(SyncPushArticleJob syncPushArticleJob) {
         MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
         // 是否并发执行
@@ -145,7 +136,6 @@ public class QuartzConfig {
     }
 
     @Bean(name = "syncPushArticleTrigger")
-    @RefreshScope
     public CronTriggerFactoryBean syncPushArticleTrigger(JobDetail syncPushArticleJobDetail) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         // 设置jobDetail
@@ -158,7 +148,6 @@ public class QuartzConfig {
     }
 
     @Bean(name = "schedulerFactory")
-    @RefreshScope
     public SchedulerFactoryBean schedulerFactory(
             Trigger syncPullArticleOfCustomAuthorTrigger,
             Trigger syncPullArticleOfCustomWordTrigger,
@@ -189,6 +178,7 @@ public class QuartzConfig {
             }
             bean.setTriggers(triggerList.toArray(new Trigger[0]));
         }
+        bean.setGlobalJobListeners(new SimpleJobListener());
         return bean;
     }
 

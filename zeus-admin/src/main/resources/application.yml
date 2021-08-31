@@ -7,6 +7,8 @@ spring:
     user:
       name: admin
       password: admin
+  admin:
+    ding-talk-token: 7b78714f7c351d6891eab4e81bc79b1533586c3a20e50ecb82e506c27c819f6f
 eureka:
   instance:
     prefer-ip-address: true

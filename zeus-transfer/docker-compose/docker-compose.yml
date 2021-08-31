@@ -14,10 +14,12 @@ services:
     depends_on:
       - mysql-zeus-transfer
     environment:
-      - ZEUS_EUREKA_HOST_1=124.70.111.118
-      - ZEUS_EUREKA_HOST_2=124.70.111.118
+      - ZEUS_EUREKA_HOST_1=192.168.30.11
+      - ZEUS_EUREKA_HOST_2=192.168.30.11
       - SPRING_CLOUD_CONFIG_NAME=zeus
       - SPRING_CLOUD_CONFIG_PROFILE=tsgz
+      - EUREKA_INSTANCE_IP_ADDRESS=210.13.50.104
+      - CUSTOM_QUARTZ_CORN=0 30 * * *  ?
   mysql-zeus-transfer:
     container_name: mysql-zeus-transfer
     image: mysql:8.0.23
