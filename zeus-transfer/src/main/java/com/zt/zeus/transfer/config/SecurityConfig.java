@@ -22,7 +22,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER);
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/actuator/**").permitAll()
+                .antMatchers("/actuator/**").anonymous()
+                .antMatchers("/api/pull/**").permitAll()
                 .anyRequest().authenticated().and()
                 .formLogin()
                 .successForwardUrl("/swagger-ui/index.html")

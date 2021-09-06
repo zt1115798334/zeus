@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 /**
  * Created by fan on 7/29/20.
  */
-@Slf4j
 @Component
 @AllArgsConstructor
 public class SyncPullArticleHandler {
@@ -40,7 +39,6 @@ public class SyncPullArticleHandler {
         private final CustomWordProperties customWordProperties;
 
         public long handlerData(JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
@@ -63,7 +61,6 @@ public class SyncPullArticleHandler {
         private final PullService pullEsArticle;
 
         public long handlerData(JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
@@ -89,7 +86,6 @@ public class SyncPullArticleHandler {
         private final CustomWordProperties customWordProperties;
 
         public long handlerData(JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
@@ -118,7 +114,6 @@ public class SyncPullArticleHandler {
 
         @Override
         protected long handleDataOfPerPage(List<Author> list, int pageNumber, JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
@@ -152,7 +147,6 @@ public class SyncPullArticleHandler {
 
         @Override
         protected long handleDataOfPerPage(List<GatherWordDto> list, int pageNumber, JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
@@ -185,7 +179,6 @@ public class SyncPullArticleHandler {
         private final CustomWordProperties customWordProperties;
 
         public long handlerData(JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
@@ -211,7 +204,6 @@ public class SyncPullArticleHandler {
         private final CustomWordProperties customWordProperties;
 
         public long handlerData(JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
@@ -240,7 +232,6 @@ public class SyncPullArticleHandler {
 
         @Override
         protected long handleDataOfPerPage(List<Author> list, int pageNumber, JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
@@ -273,8 +264,6 @@ public class SyncPullArticleHandler {
 
         @Override
         protected long handleDataOfPerPage(List<GatherWordDto> list, int pageNumber, JSONObject extraParams) {
-            log.info("extraParams:{}", extraParams.toJSONString());
-            log.info("GatherWordDto:{}", list);
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);

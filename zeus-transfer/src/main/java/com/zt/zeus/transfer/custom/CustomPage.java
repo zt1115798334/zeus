@@ -24,10 +24,18 @@ public class CustomPage<T> {
 
     private Long totalElements = 0L;
 
+    private Long totalPage = 0L;
+
     public CustomPage(List<T> list, Long totalElements, String scrollId) {
         this.list = list;
         this.totalElements = totalElements;
         this.scrollId = scrollId;
+    }
+    public CustomPage(List<T> list, Long totalElements,Long totalPage, String scrollId) {
+        this.list = list;
+        this.totalElements = totalElements;
+        this.scrollId = scrollId;
+        this.totalPage = totalPage;
     }
 
     public CustomPage(JSONArray jsonArray, Long totalElements, String scrollId) {
@@ -43,4 +51,5 @@ public class CustomPage<T> {
         this.totalElements = totalElements;
         this.scrollId = scrollId;
     }
+
 }

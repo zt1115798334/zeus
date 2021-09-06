@@ -48,7 +48,7 @@ public class SyncPullArticleOfCustomAuthorJob {
             extraParams.put("fromType", DateUtils.formatDate(LocalDate.now()));
             count = customAuthorsByTimeRange.handlerData(extraParams);
         }
-        log.info("处理数量为：{}", count);
+        log.info("exec num: {}", count);
     }
 
 }

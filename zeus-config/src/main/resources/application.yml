@@ -12,17 +12,17 @@ spring:
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:native,local}
 eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://admin:admin@${ZEUS_EUREKA_HOST_1:127.0.0.1}:8761/eureka,http://admin:admin@${ZEUS_EUREKA_HOST_2:127.0.0.1}:8762/eureka
   instance:
     prefer-ip-address: true
     instance-id: zeus-config
     lease-expiration-duration-in-seconds: 5
     lease-renewal-interval-in-seconds: 2
     ip-address: ${EUREKA_INSTANCE_IP_ADDRESS:127.0.0.1}
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://admin:admin@${ZEUS_EUREKA_HOST_1:127.0.0.1}:8761/eureka,http://admin:admin@${ZEUS_EUREKA_HOST_2:127.0.0.1}:8762/eureka
 management:
   endpoints:
     web:

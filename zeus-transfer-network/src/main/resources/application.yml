@@ -2,7 +2,7 @@ server:
   port: 8898
 spring:
   application:
-    name: zeus-transfer-${spring.cloud.config.profile}
+    name: zeus-transfer-network
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://${SPRING_DATASOURCE_URL:127.0.0.1}:3306/pull-push?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&&serverTimezone=UTC

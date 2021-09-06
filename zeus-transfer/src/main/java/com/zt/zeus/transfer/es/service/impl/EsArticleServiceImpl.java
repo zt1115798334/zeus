@@ -3,6 +3,7 @@ package com.zt.zeus.transfer.es.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
+import com.google.common.base.Objects;
 import com.zt.zeus.transfer.custom.CustomPage;
 import com.zt.zeus.transfer.enums.Carrier;
 import com.zt.zeus.transfer.enums.SearchModel;
@@ -13,7 +14,6 @@ import com.zt.zeus.transfer.es.service.EsInterfaceService;
 import com.zt.zeus.transfer.properties.EsProperties;
 import com.zt.zeus.transfer.utils.ArticleUtils;
 import com.zt.zeus.transfer.utils.EsParamsUtils;
-import com.google.common.base.Objects;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -73,9 +73,10 @@ public class EsArticleServiceImpl implements EsArticleService {
                         return new CustomPage<EsArticle>();
                     }
                     List<EsArticle> rows = jsonToArticleList(jo.getJSONArray("result"));
-                    long total = jo.getLongValue("count");
+                    long totalElements = jo.getLongValue("count");
+                    long totalPage = jo.getLongValue("page");
                     String scrollId = jo.getString("scrollId");
-                    return new CustomPage<>(rows, total, scrollId);
+                    return new CustomPage<>(rows, totalElements, totalPage, scrollId);
                 })
                 .orElse(new CustomPage<>());
     }
@@ -85,7 +86,6 @@ public class EsArticleServiceImpl implements EsArticleService {
                                                           String scrollId,
                                                           LocalDateTime startDateTime, LocalDateTime endDateTime,
                                                           int pageSize, List<Carrier> carrier) {
-        System.out.println("searchModel = " + searchModel);
         JSONObject params = new JSONObject();
         if (Objects.equal(searchModel, SearchModel.RELATED_WORDS)) {
             if (Objects.equal(esProperties.getSearchType(), SearchType.EXACT)) {

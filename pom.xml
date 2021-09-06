@@ -16,6 +16,8 @@
     <modules>
         <module>zeus-admin</module>
         <module>zeus-transfer</module>
+        <module>zeus-transfer-local</module>
+        <module>zeus-transfer-network</module>
         <module>zeus-eureka</module>
         <module>zeus-config</module>
     </modules>
@@ -64,6 +66,11 @@
                 <groupId>io.springfox</groupId>
                 <artifactId>springfox-boot-starter</artifactId>
                 <version>3.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zt.zeus</groupId>
+                <artifactId>zeus-transfer</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

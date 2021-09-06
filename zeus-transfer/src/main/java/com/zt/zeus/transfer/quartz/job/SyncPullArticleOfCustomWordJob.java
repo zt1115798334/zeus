@@ -1,12 +1,12 @@
 package com.zt.zeus.transfer.quartz.job;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Objects;
 import com.zt.zeus.transfer.enums.StorageMode;
 import com.zt.zeus.transfer.enums.TimeType;
 import com.zt.zeus.transfer.handler.SyncPullArticleHandler;
 import com.zt.zeus.transfer.properties.QuartzProperties;
 import com.zt.zeus.transfer.utils.DateUtils;
-import com.google.common.base.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
@@ -48,7 +48,7 @@ public class SyncPullArticleOfCustomWordJob {
             extraParams.put("fromType", DateUtils.formatDate(LocalDate.now()));
             count = customWordsByTimeRange.handlerData(extraParams);
         }
-        log.info("处理数量为：{}", count);
+        log.info("exec num: {}", count);
     }
 
 }

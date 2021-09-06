@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -85,11 +84,6 @@ public class CustomEventNotifier extends AbstractEventNotifier {
         });
     }
 
-    /**
-     * 发送消息
-     *
-     * @param messageText
-     */
     private void sendMessage(String messageText) {
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             HttpPost httpPost = new HttpPost("https://oapi.dingtalk.com/robot/send?access_token=" + dingTalkToken);

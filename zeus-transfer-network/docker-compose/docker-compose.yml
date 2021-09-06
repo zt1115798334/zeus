@@ -1,12 +1,11 @@
 version: '3'
 services:
   zeus-transfer:
-    container_name: zeus-transfer
-    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-transfer:latest
+    container_name: zeus-transfer-network
+    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-transfer-network:latest
     ports:
       - '8898:8898'
     volumes:
-      - ./zeus-transfer/data/log:/log:rw
 #      - /etc/localtime:/etc/localtime:ro
       - /logs/:/logs/:rw
     env_file:
@@ -14,8 +13,8 @@ services:
     depends_on:
       - mysql-zeus-transfer
     environment:
-      - ZEUS_EUREKA_HOST_1=192.168.30.11
-      - ZEUS_EUREKA_HOST_2=192.168.30.11
+      - ZEUS_EUREKA_HOST_1=124.70.111.118
+      - ZEUS_EUREKA_HOST_2=124.70.111.118
       - SPRING_CLOUD_CONFIG_NAME=zeus
       - SPRING_CLOUD_CONFIG_PROFILE=tsgz
       - EUREKA_INSTANCE_IP_ADDRESS=210.13.50.104

@@ -107,7 +107,6 @@ public class HttpClientUtils {
             response = httpClient.execute(httpGet);
             if (response != null) {
                 int statusCode = response.getStatusLine().getStatusCode();
-                System.out.println("statusCode = " + statusCode);
                 return statusCode == HttpStatus.SC_OK;
             } else {
                 log.error("操作失败，Request URL：{}", url);
@@ -161,7 +160,6 @@ public class HttpClientUtils {
     private String httpRequest(String url, Map<String, String> headerMap, Map<String, Object> paramMap, Charset charset, int reTry, HttpMethod httpMethod, String mediaType) {
         long startTime = System.currentTimeMillis();
         String paramJson = JSONObject.parseObject(JSON.toJSONString(paramMap, SerializerFeature.DisableCircularReferenceDetect)).toJSONString();
-        log.info("请求URl：{}", url);
         log.debug("请求URl：{},请求Method：{},请求头：{}，请求内容：{}", url, httpMethod.toString(), headerMap, paramJson);
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
@@ -226,7 +224,6 @@ public class HttpClientUtils {
     private void httpRequestDownFile(String url, Map<String, String> headerMap, Map<String, Object> paramMap, OutputStream out) {
         long startTime = System.currentTimeMillis();
         String paramJson = JSONObject.parseObject(JSON.toJSONString(paramMap, SerializerFeature.DisableCircularReferenceDetect)).toJSONString();
-        log.info("请求URl：{}", url);
         log.debug("请求URl：{},请求头：{}，请求内容：{}", url, headerMap, paramJson);
         CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
@@ -266,7 +263,6 @@ public class HttpClientUtils {
     private String httpRequestUploadFile(String url, Map<String, String> headerMap, Map<String, Object> paramMap, HttpServletRequest request, List<MultipartFile> multipartFiles) {
         Charset charset = StandardCharsets.UTF_8;
         String paramJson = JSONObject.parseObject(JSON.toJSONString(paramMap, SerializerFeature.DisableCircularReferenceDetect)).toJSONString();
-        log.info("请求URl：{}", url);
         log.debug("请求URl：{},请求Method：{},请求头：{}，请求内容：{}", url, HttpMethod.POST, headerMap, paramJson);
         // 创建一个通用的多部分解析器
         long startTime = System.currentTimeMillis();

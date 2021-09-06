@@ -2,6 +2,8 @@ package com.zt.zeus.transfer.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Objects;
+import com.google.common.util.concurrent.RateLimiter;
 import com.zt.zeus.transfer.analysis.service.AnalysisService;
 import com.zt.zeus.transfer.custom.CustomPage;
 import com.zt.zeus.transfer.custom.RichParameters;
@@ -15,8 +17,6 @@ import com.zt.zeus.transfer.service.callable.SendInInterface;
 import com.zt.zeus.transfer.service.callable.WriteInLocal;
 import com.zt.zeus.transfer.utils.DateUtils;
 import com.zt.zeus.transfer.utils.TheadUtils;
-import com.google.common.base.Objects;
-import com.google.common.util.concurrent.RateLimiter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -118,8 +118,8 @@ public class PullServiceImpl implements PullService {
 
             ConcurrentHashMap<String, String> concurrentHashMap = new ConcurrentHashMap<>(1000);
             AtomicInteger atomicInteger = new AtomicInteger();
+            AtomicInteger atomicPage = new AtomicInteger();
 
-            long executionStart = System.currentTimeMillis();
             AtomicLong atomicLong = new AtomicLong();
             while (true) {
                 long runStart = System.currentTimeMillis();
@@ -133,11 +133,11 @@ public class PullServiceImpl implements PullService {
                 if (allDataEsArticlePage.getScrollId() != null) {
                     concurrentHashMap.put(mapKey, allDataEsArticlePage.getScrollId());
                 }
+
                 List<EsArticle> articleList = allDataEsArticlePage.getList();
                 int articleSize = articleList.size();
                 atomicLong.addAndGet(articleSize);
-                System.out.println("atomicLong = " + atomicLong.get());
-                if (allDataEsArticlePage.getTotalElements() == 0 || articleSize == 0 ) {
+                if (allDataEsArticlePage.getTotalElements() == 0 || articleSize == 0) {
                     break;
                 }
                 RateLimiter rateLimiter = RateLimiter.create(100);
@@ -165,10 +165,20 @@ public class PullServiceImpl implements PullService {
                         minRequestTime = time;
                     }
                 }
-                log.info("average qps: {}, " +
-                                "average latency: {} ms," +
+                log.info("startDateTime: {}, " +
+                                "startDateTime: {}, " +
+                                "SearchModel:{}, " +
+                                "total page: {}, " +
+                                "current page: {}, " +
+                                "average qps: {}, " +
+                                "average latency: {} ms, " +
                                 "maximum latency: {} ms, " +
-                                "minimum latency: {} ms",
+                                "minimum latency: {} ms ",
+                        DateUtils.formatDateTime(startDateTime),
+                        DateUtils.formatDateTime(endDateTime),
+                        richParameters.getSearchModel(),
+                        allDataEsArticlePage.getTotalPage(),
+                        atomicPage.incrementAndGet(),
                         articleSize / (second == 0 ? 1 : second),
                         totalRequestTime / articleSize,
                         maxRequestTime,
@@ -176,7 +186,6 @@ public class PullServiceImpl implements PullService {
             }
             executorService.shutdown();
             long executionEnd = System.currentTimeMillis();
-            log.info("executor time: {}ms", (executionEnd - executionStart));
             return atomicLong.get();
         }
     }

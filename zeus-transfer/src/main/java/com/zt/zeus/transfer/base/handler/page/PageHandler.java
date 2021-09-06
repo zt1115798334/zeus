@@ -21,20 +21,21 @@ public abstract class PageHandler<T> {
     protected final int DEFAULT_BATCH_SIZE = SysConst.DEFAULT_BATCH_SIZE;
 
 
-    public void handle(JSONObject extraParams) {
+    public long handle(JSONObject extraParams) {
+        long count = 0;
         try {
             long s = System.currentTimeMillis();
-            @SuppressWarnings("unused")
-            int count = handleData(extraParams);
+             count = handleData(extraParams);
 
             log.info("处理数据结束,数据处理时间:[" + (System.currentTimeMillis() - s) + "]ms");
         } catch (Exception e) {
             e.printStackTrace();
             log.error("处理数据出错，异常信息：{} ", e.toString());
         }
+        return count;
     }
 
-    private int handleData(JSONObject extraParams) {
+    private long handleData(JSONObject extraParams) {
         int total = 0;
         int pageNumber = 1;
 

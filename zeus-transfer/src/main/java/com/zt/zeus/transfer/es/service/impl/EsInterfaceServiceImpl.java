@@ -20,7 +20,6 @@ public class EsInterfaceServiceImpl implements EsInterfaceService {
     private final EsProperties esProperties;
 
     private StringBuffer splicingUrl(EsProperties.EsInfo esInfo) {
-        log.info("esInfo:{}", esInfo);
         long time = System.currentTimeMillis() / 1000;// 秒
         String token = MD5Utils.generateToken(esInfo.getKey(), time);
         StringBuffer restUrl = new StringBuffer();
