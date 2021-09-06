@@ -31,28 +31,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class SyncPullArticleHandler {
 
-    @Component("customAuthorsByDateRange")
-    @AllArgsConstructor
-    public static class CustomAuthorsByDateRange {
-
-        private final PullService pullEsArticle;
-        private final CustomWordProperties customWordProperties;
-
-        public long handlerData(JSONObject extraParams) {
-            StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
-            LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
-            LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
-            List<String> authors = customWordProperties.getAuthor().stream()
-                    .distinct().collect(Collectors.toList());
-            RichParameters richParameters = RichParameters.builder()
-                    .storageMode(storageMode)
-                    .searchModel(SearchModel.AUTHOR)
-                    .fromType("custom")
-                    .carrier(customWordProperties.getCarrier())
-                    .build();
-            return pullEsArticle.pullEsArticleByDateRange(richParameters, authors, startDate, endDate);
-        }
-    }
 
     @Component("queryWordsByDateRange")
     @AllArgsConstructor
@@ -75,6 +53,51 @@ public class SyncPullArticleHandler {
                     .fromType("custom")
                     .build();
             return pullEsArticle.pullEsArticleByDateRange(richParameters, gatherWords, startDate, endDate);
+        }
+    }
+
+    @Component("queryAuthorsByDateRange")
+    @AllArgsConstructor
+    public static class QueryAuthorsByDateRange {
+
+        private final PullService pullEsArticle;
+
+        public long handlerData(JSONObject extraParams) {
+            StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
+            LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
+            LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
+            JSONArray queryAuthors = extraParams.getJSONArray("queryAuthors");
+            List<String> authors = queryAuthors.stream().map(String::valueOf)
+                    .distinct().collect(Collectors.toList());
+            RichParameters richParameters = RichParameters.builder()
+                    .storageMode(storageMode)
+                    .searchModel(SearchModel.AUTHOR)
+                    .fromType("custom")
+                    .build();
+            return pullEsArticle.pullEsArticleByDateRange(richParameters, authors, startDate, endDate);
+        }
+    }
+
+    @Component("customAuthorsByDateRange")
+    @AllArgsConstructor
+    public static class CustomAuthorsByDateRange {
+
+        private final PullService pullEsArticle;
+        private final CustomWordProperties customWordProperties;
+
+        public long handlerData(JSONObject extraParams) {
+            StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
+            LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
+            LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
+            List<String> authors = customWordProperties.getAuthor().stream()
+                    .distinct().collect(Collectors.toList());
+            RichParameters richParameters = RichParameters.builder()
+                    .storageMode(storageMode)
+                    .searchModel(SearchModel.AUTHOR)
+                    .fromType("custom")
+                    .carrier(customWordProperties.getCarrier())
+                    .build();
+            return pullEsArticle.pullEsArticleByDateRange(richParameters, authors, startDate, endDate);
         }
     }
 

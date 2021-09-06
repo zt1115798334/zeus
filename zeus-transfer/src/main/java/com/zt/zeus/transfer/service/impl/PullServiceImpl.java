@@ -142,8 +142,6 @@ public class PullServiceImpl implements PullService {
                 }
                 RateLimiter rateLimiter = RateLimiter.create(100);
                 List<Future<Long>> futureList = articleList.stream().map(esArticle -> {
-//                    String ossPath = esArticle.getOssPath();
-//                    String fileName = ossPath.substring(ossPath.indexOf("_") + 1);
                     String fileName = esArticle.getId();
                     FileInfoDto fileInfoDto = FileInfoDto.builder().filename(fileName).content(getArticleJson(esArticle)).build();
                     Callable<Long> callable = Objects.equal(storageMode, StorageMode.LOCAL) ?
@@ -166,8 +164,9 @@ public class PullServiceImpl implements PullService {
                     }
                 }
                 log.info("startDateTime: {}, " +
-                                "startDateTime: {}, " +
+                                "endDateTime: {}, " +
                                 "SearchModel:{}, " +
+                                "total count: {}, " +
                                 "total page: {}, " +
                                 "current page: {}, " +
                                 "average qps: {}, " +
@@ -177,6 +176,7 @@ public class PullServiceImpl implements PullService {
                         DateUtils.formatDateTime(startDateTime),
                         DateUtils.formatDateTime(endDateTime),
                         richParameters.getSearchModel(),
+                        allDataEsArticlePage.getTotalElements(),
                         allDataEsArticlePage.getTotalPage(),
                         atomicPage.incrementAndGet(),
                         articleSize / (second == 0 ? 1 : second),

@@ -33,6 +33,12 @@ curl -X POST "http://localhost:8899/api/pull/pullArticleOfQueryWords" -H "accept
 * 搜索词获取文章到本地
   ---------------
 curl -X POST "http://localhost:8899/api/pull/pullArticleOfQueryWords" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "endDate=2021-08-08" -F "queryWords=搜搜" -F "startDate=2021-08-08" -F "storageMode=LOCAL"
+* 搜索作者获取文章到接口
+  ---------------
+curl -X POST "http://localhost:8899/api/pull/pullArticleOfQueryAuthors" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "endDate=2021-08-08" -F "queryAuthors=搜搜" -F "startDate=2021-08-08" -F "storageMode=INTERFACE"
+* 搜索作者获取文章到本地
+  ---------------
+curl -X POST "http://localhost:8899/api/pull/pullArticleOfQueryAuthors" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "endDate=2021-08-08" -F "queryAuthors=搜搜" -F "startDate=2021-08-08" -F "storageMode=LOCAL"
 * 设置日志等级
   ---------------
 curl -X POST 'localhost:8899/actuator/loggers/com.zt.zeus.transfer.utils.HttpClientUtils' -H 'Content-Type: application/json' -H 'Cookie: JSESSIONID=E172150E097D6ADCD9ABB813BE25FFA2' --data-raw '{

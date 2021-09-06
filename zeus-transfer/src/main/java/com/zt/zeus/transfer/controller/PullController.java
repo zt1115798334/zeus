@@ -47,6 +47,9 @@ public class PullController extends BaseResultMessage {
     @Resource(name = "customAuthorsByDateRange")
     private final SyncPullArticleHandler.CustomAuthorsByDateRange customAuthorsByDateRange;
 
+    @Resource(name = "queryAuthorsByDateRange")
+    private final SyncPullArticleHandler.QueryAuthorsByDateRange queryAuthorsByDateRange;
+
     @Resource(name = "gatherAuthorsByDateRange")
     private final SyncPullArticleHandler.GatherAuthorsByDateRange gatherAuthorsByDateRange;
 
@@ -135,6 +138,29 @@ public class PullController extends BaseResultMessage {
         extraParams.put("startDate", startDate);
         extraParams.put("endDate", endDate);
         long handlerData = customAuthorsByDateRange.handlerData(extraParams);
+        return success(handlerData);
+    }
+
+    @ApiOperation(value = "通过搜索作者拉取数据")
+    @PostMapping(value = "pullArticleOfQueryAuthors",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResultMessage pullArticleOfQueryAuthors(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+                                                 @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                 @RequestParam LocalDate startDate,
+                                                 @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
+                                                 @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                 @RequestParam LocalDate endDate,
+                                                 @ApiParam(name = "storageMode", value = "存储项", required = true)
+                                                 @RequestParam StorageMode storageMode,
+                                                 @ApiParam(name = "queryAuthors", value = "查询词", required = true)
+                                                 @RequestParam List<String> queryAuthors) {
+        JSONObject extraParams = new JSONObject();
+        extraParams.put("storageMode", storageMode);
+        extraParams.put("startDate", startDate);
+        extraParams.put("endDate", endDate);
+        extraParams.put("queryAuthors", queryAuthors);
+        long handlerData = queryAuthorsByDateRange.handlerData(extraParams);
         return success(handlerData);
     }
 
