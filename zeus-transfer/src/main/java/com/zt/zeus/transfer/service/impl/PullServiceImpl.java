@@ -8,6 +8,7 @@ import com.zt.zeus.transfer.analysis.service.AnalysisService;
 import com.zt.zeus.transfer.custom.CustomPage;
 import com.zt.zeus.transfer.custom.RichParameters;
 import com.zt.zeus.transfer.dto.FileInfoDto;
+import com.zt.zeus.transfer.enums.Carrier;
 import com.zt.zeus.transfer.enums.StorageMode;
 import com.zt.zeus.transfer.es.domain.EsArticle;
 import com.zt.zeus.transfer.es.service.EsArticleService;
@@ -16,6 +17,7 @@ import com.zt.zeus.transfer.service.PullService;
 import com.zt.zeus.transfer.service.callable.SendInInterface;
 import com.zt.zeus.transfer.service.callable.WriteInLocal;
 import com.zt.zeus.transfer.utils.DateUtils;
+import com.zt.zeus.transfer.utils.MD5Utils;
 import com.zt.zeus.transfer.utils.TheadUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,11 +27,15 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
+
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 @AllArgsConstructor
 @Service
@@ -40,6 +46,24 @@ public class PullServiceImpl implements PullService {
     private final EsProperties esProperties;
 
     private final AnalysisService analysisService;
+
+    @Override
+    public long pullEsArticleByArticleIds(RichParameters richParameters, List<String> articleIds, LocalDate localDate) {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        RateLimiter rateLimiter = RateLimiter.create(50, 1, NANOSECONDS);
+        StorageMode storageMode = richParameters.getStorageMode();
+        List<EsArticle> articleList = esArticleService.findIdEsArticlePage(articleIds, localDate);
+        AtomicInteger atomicInteger = new AtomicInteger();
+        List<Future<Long>> futureList = articleList.stream().map(esArticle -> {
+            String fileName = esArticle.getId();
+            FileInfoDto fileInfoDto = FileInfoDto.builder().filename(fileName).content(getArticleJson(esArticle)).build();
+            Callable<Long> callable = Objects.equal(storageMode, StorageMode.LOCAL) ?
+                    new WriteInLocal(localDate, getArticleJson(esArticle), esProperties.getFilePath(), fileName, atomicInteger)
+                    : new SendInInterface(rateLimiter, analysisService, fileInfoDto);
+            return executorService.submit(callable);
+        }).collect(Collectors.toList());
+        return futureList.stream().map(TheadUtils::getFutureLong).mapToLong(Long::longValue).sum();
+    }
 
     /**
      * 一天一天查询
@@ -135,12 +159,13 @@ public class PullServiceImpl implements PullService {
                 }
 
                 List<EsArticle> articleList = allDataEsArticlePage.getList();
+                Map<String, Long> carrierMap = articleList.parallelStream().collect(Collectors.groupingBy(EsArticle::getCarrier, Collectors.counting()));
                 int articleSize = articleList.size();
                 atomicLong.addAndGet(articleSize);
                 if (allDataEsArticlePage.getTotalElements() == 0 || articleSize == 0) {
                     break;
                 }
-                RateLimiter rateLimiter = RateLimiter.create(100);
+                RateLimiter rateLimiter = RateLimiter.create(50, 1, NANOSECONDS);
                 List<Future<Long>> futureList = articleList.stream().map(esArticle -> {
                     String fileName = esArticle.getId();
                     FileInfoDto fileInfoDto = FileInfoDto.builder().filename(fileName).content(getArticleJson(esArticle)).build();
@@ -183,6 +208,10 @@ public class PullServiceImpl implements PullService {
                         totalRequestTime / articleSize,
                         maxRequestTime,
                         minRequestTime);
+                String collect = Arrays.stream(Carrier.values())
+                        .map(carrier -> carrier.getName() + ": " + carrierMap.getOrDefault(String.valueOf(carrier.getCode()), 0L))
+                        .collect(Collectors.joining(", "));
+                log.debug(collect);
             }
             executorService.shutdown();
             long executionEnd = System.currentTimeMillis();
@@ -216,4 +245,7 @@ public class PullServiceImpl implements PullService {
         return params.toJSONString();
     }
 
+    public static void main(String[] args) {
+        System.out.println(MD5Utils.MD5("https://mp.weixin.qq.com/s?__biz=MTQzMTE0MjcyMQ==&mid=2666983584&idx=2&sn=f657c85890ac842b098bb846220c172c"));
+    }
 }

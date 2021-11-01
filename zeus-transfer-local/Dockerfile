@@ -5,4 +5,4 @@ ADD /target/zeus-transfer-local-0.0.1-SNAPSHOT.jar zeus-transfer-local-0.0.1-SNA
 RUN export LC_ALL=zh_CN.UTF-8
 RUN echo "export LC_ALL=zh_CN.UTF-8"  >>  /etc/profile
 RUN echo "Asia/shanghai" > /etc/timezone
-ENTRYPOINT ["java","-jar","zeus-transfer-local-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java","-jar","-XX:MetaspaceSize=512m","-XX:MaxMetaspaceSize=1024m","-Xms128m","-Xmx1024m","-Xmn256m","-Xss256k","-XX:SurvivorRatio=8","-XX:+UseConcMarkSweepGC","zeus-transfer-local-0.0.1-SNAPSHOT.jar"]

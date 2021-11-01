@@ -36,7 +36,6 @@ public class EsProperties {
 
     private EsInfo es5;
 
-
     @ToString
     @Getter
     @Setter
@@ -45,6 +44,7 @@ public class EsProperties {
         private String host;
         private String appId;
         private String fullQuery;
+        private String articleQuery;
     }
 
 }

@@ -1,6 +1,6 @@
 package com.zt.zeus.transfer.mysql.repo;
 
-import com.zt.zeus.transfer.dto.GatherWordDto;
+import com.zt.zeus.transfer.dto.GatherRelatedWordDto;
 import com.zt.zeus.transfer.mysql.entity.GatherWord;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,12 +19,12 @@ import org.springframework.data.repository.query.Param;
 public interface GatherWordRepository extends CrudRepository<GatherWord, Long>,
         JpaSpecificationExecutor<GatherWord> {
 
-    @Query(value = "select new com.zt.zeus.transfer.dto.GatherWordDto(name) from GatherWord",
+    @Query(value = "select new com.zt.zeus.transfer.dto.GatherRelatedWordDto(name) from GatherWord",
             countQuery = "select count(id) from GatherWord")
-    Page<GatherWordDto> findAllGatherWords(Pageable pageable);
+    Page<GatherRelatedWordDto> findAllGatherWords(Pageable pageable);
     
-    @Query(value = "select new com.zt.zeus.transfer.dto.GatherWordDto(name) from GatherWord where status=:status",
+    @Query(value = "select new com.zt.zeus.transfer.dto.GatherRelatedWordDto(name) from GatherWord where status=:status",
             countQuery = "select count(id) from GatherWord where status=:status")
-    Page<GatherWordDto> findAllGatherWordsStatus(@Param(value="status")Long status, Pageable pageable);
+    Page<GatherRelatedWordDto> findAllGatherWordsStatus(@Param(value="status")Long status, Pageable pageable);
 
 }

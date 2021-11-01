@@ -10,11 +10,12 @@ import com.alibaba.fastjson.JSONObject;
  * description: es接口业务层
  */
 public interface EsInterfaceService{
+
+    String dataQueryArticleId(JSONObject params);
     /**
      * 全文检索接口  分页
      *
      * @param params     参数
-     * @param pageNumber 页数
      * @param pageSize   每页显示数量
      * @return String
      */

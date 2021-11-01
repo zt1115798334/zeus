@@ -1,12 +1,12 @@
 package com.zt.zeus.transfer.quartz.job;
 
 import com.alibaba.fastjson.JSONObject;
-import com.google.common.base.Objects;
 import com.zt.zeus.transfer.enums.StorageMode;
 import com.zt.zeus.transfer.enums.TimeType;
 import com.zt.zeus.transfer.handler.SyncPullArticleHandler;
 import com.zt.zeus.transfer.properties.QuartzProperties;
 import com.zt.zeus.transfer.utils.DateUtils;
+import com.google.common.base.Objects;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
@@ -17,12 +17,13 @@ import java.time.LocalDate;
 @Slf4j
 @Component
 @EnableScheduling
-public class SyncPullArticleOfCustomWordJob {
-    @Resource(name = "customWordsByDateRange")
-    private SyncPullArticleHandler.CustomWordsByDateRange customWordsByDateRange;
+public class SyncPullArticleOfGatherRelatedWordJob {
 
-    @Resource(name = "customWordsByTimeRange")
-    private SyncPullArticleHandler.CustomWordsByTimeRange customWordsByTimeRange;
+    @Resource(name = "gatherRelatedWordsByDateRange")
+    private SyncPullArticleHandler.GatherRelatedWordsByDateRange gatherRelatedWordsByDateRange;
+
+    @Resource(name = "gatherRelatedWordsByTimeRange")
+    private SyncPullArticleHandler.GatherRelatedWordsByTimeRange gatherRelatedWordsByTimeRange;
 
     @Resource
     private QuartzProperties quartzProperties;
@@ -39,16 +40,16 @@ public class SyncPullArticleOfCustomWordJob {
             extraParams.put("storageMode", StorageMode.INTERFACE);
             extraParams.put("startDate", dateRange.getStartDate());
             extraParams.put("endDate", dateRange.getEndDate());
-            count = customWordsByDateRange.handlerData(extraParams);
+            count =gatherRelatedWordsByDateRange.handle(extraParams);
         } else {
             JSONObject extraParams = new JSONObject();
             extraParams.put("storageMode", StorageMode.INTERFACE);
             extraParams.put("startDateTime", dateRange.getStartDateTime());
             extraParams.put("endDateTime", dateRange.getEndDateTime());
+            extraParams.put("status", true);
             extraParams.put("fromType", DateUtils.formatDate(LocalDate.now()));
-            count = customWordsByTimeRange.handlerData(extraParams);
+            count =gatherRelatedWordsByTimeRange.handle(extraParams);
         }
         log.info("exec num: {}", count);
     }
-
 }

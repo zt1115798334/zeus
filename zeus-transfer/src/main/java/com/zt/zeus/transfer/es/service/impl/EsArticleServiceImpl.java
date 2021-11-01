@@ -13,12 +13,14 @@ import com.zt.zeus.transfer.es.service.EsArticleService;
 import com.zt.zeus.transfer.es.service.EsInterfaceService;
 import com.zt.zeus.transfer.properties.EsProperties;
 import com.zt.zeus.transfer.utils.ArticleUtils;
+import com.zt.zeus.transfer.utils.DateUtils;
 import com.zt.zeus.transfer.utils.EsParamsUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +42,7 @@ public class EsArticleServiceImpl implements EsArticleService {
     private final EsInterfaceService esInterfaceService;
 
     private final EsProperties esProperties;
+
 
     private List<EsArticle> jsonToArticleList(JSONArray jsonArray) {
         return Optional.ofNullable(jsonArray)
@@ -82,6 +85,21 @@ public class EsArticleServiceImpl implements EsArticleService {
     }
 
     @Override
+    public List<EsArticle> findIdEsArticlePage(List<String> articleIds, LocalDate localDate) {
+        List<JSONObject> collect = articleIds.parallelStream()
+                .map(articleId -> {
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("id", articleId);
+                    jsonObject.put("publishTime", DateUtils.formatDate(localDate)+" 00:00:00");
+                    return jsonObject;
+                }).collect(Collectors.toList());
+        JSONObject params = new JSONObject();
+        params.put("ids", collect);
+        String str = esInterfaceService.dataQueryArticleId(params);
+        return jsonToArticlePage(str).getList();
+    }
+
+    @Override
     public CustomPage<EsArticle> findAllDataEsArticlePage(SearchModel searchModel, JSONArray wordJa,
                                                           String scrollId,
                                                           LocalDateTime startDateTime, LocalDateTime endDateTime,
@@ -89,9 +107,6 @@ public class EsArticleServiceImpl implements EsArticleService {
         JSONObject params = new JSONObject();
         if (Objects.equal(searchModel, SearchModel.RELATED_WORDS)) {
             if (Objects.equal(esProperties.getSearchType(), SearchType.EXACT)) {
-//                List<JSONObject> jo = Lists.newArrayList();
-//                jo.add(EsParamsUtils.getQueryRelatedWordsParams(wordJa));
-//                params.put("queryParams", jo);
                 params.putAll(EsParamsUtils.getQueryRelatedWordsParams(wordJa));
             } else {
                 params.putAll(EsParamsUtils.getQuerySearchValueParams(wordJa));

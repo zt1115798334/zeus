@@ -49,46 +49,35 @@ logging:
   file:
     name: /logs/${spring.application.name}/${spring.application.name}.log
 custom:
-  custom-word:
-    word:
-      - 中国
-    author:
-      - 环球网
-    carrier:
-      - WE_CHAT
-      - MICRO_BLOG
+  query:
+    related-query:
+      related: ${CUSTOM_QUERY_RELATED_QUERY_WORD:[中国,美国]}
+      carrier: ${CUSTOM_QUERY_RELATED_QUERY_CARRIER:}
+    author-query:
+      author: ${CUSTOM_QUERY_AUTHOR_QUERY_AUTHOR:[中国,美国]}
+      carrier: ${CUSTOM_QUERY_AUTHOR_QUERY_CARRIER:[WE_CHAT]}
   es:
     version: 5
-    page-size: 500
-    file-path: D:\test2
-    read-model: File
-    analysis: http://127.0.0.1:8081
-    search-type: EXACT
+    page-size: ${CUSTOM_ES_PAGE_SIZE:500}
+    file-path: ${CUSTOM_ES_FILE_PATH:/word}
+    read-model: ${CUSTOM_ES_READ_MODEL:File}
+    analysis: ${CUSTOM_ES_ANALYSIS:http://127.0.0.1:8081}
+    search-type: ${CUSTOM_ES_SEARCH_TYPE:EXACT}
     es5: #es配置信息
       #      key: yq_test
-      key: yq_zkdj
-      host: http://river.junquan.com.cn
+      key: ${CUSTOM_ES_ES5_KEY:yq_zkdj}
+      host: ${CUSTOM_ES_ES5_HOST:http://river.junquan.com.cn}
       app-id: 1231231
-      full-query: /river/river/dataQuery
-  #      full-query: /restserver/river/dataQuery
+      full-query: ${CUSTOM_ES_ES5_FULL_QUERY:/river/river/dataQuery}
+      article-query: ${CUSTOM_ES_ES5_ARTICLE_QUERY:/index/query/queryByIdsWithContent}
   quartz:
-    #    每隔5秒执行一次：*/5 * * * * ?
-    #    每隔1分钟执行一次：0 */1 * * * ?
-    #    每天23点执行一次：0 0 23 * * ?
-    #    每天凌晨1点执行一次：0 0 1 * * ?
-    #    每月1号凌晨1点执行一次：0 0 1 1 * ?
-    #    每月最后一天23点执行一次：0 0 23 L * ?
-    #    每周星期天凌晨1点实行一次：0 0 1 ? * L
-    #    在26分、29分、33分执行一次：0 26,29,33 * * * ?
-    #    每天的0点、13点、18点、21点都执行一次：0 0 0,13,18,21 * * ?
-    corn: 0 */1 * * * ?
+    corn: ${CUSTOM_QUARTZ_CORN:0 */1 * * * ?}
     #    YEAR, MONTH, DAY, HOUR, MINUTE, SECOND,
-    time-type: MINUTE
+    time-type: ${CUSTOM_QUARTZ_TIME_TYPE:MINUTE}
     #    开始时间提前多少 需要跟corn对应
-    time-range: -999
+    time-range: ${CUSTOM_QUARTZ_TIME_RANGE:-999}
     #    CUSTOM_AUTHOR(自定义作者) CUSTOM_WORD(自定义词) GATHER_WORD（词库中gather表）GATHER_AUTHOR（词库中author表） PUSH_ARTICLE 推送
-    job-Type:
-      - CUSTOM_WORD
+    job-Type: ${CUSTOM_QUARTZ_JOB_TYPE:CUSTOM_WORD}
     #    true 开启  false 关闭
-    state: false
+    state: ${CUSTOM_QUARTZ_STATE:false}
 

@@ -4,17 +4,16 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.zt.zeus.transfer.base.handler.page.PageHandler;
 import com.zt.zeus.transfer.custom.RichParameters;
-import com.zt.zeus.transfer.dto.GatherWordDto;
+import com.zt.zeus.transfer.dto.GatherRelatedWordDto;
 import com.zt.zeus.transfer.enums.SearchModel;
 import com.zt.zeus.transfer.enums.StorageMode;
 import com.zt.zeus.transfer.mysql.entity.Author;
 import com.zt.zeus.transfer.mysql.service.AuthorService;
-import com.zt.zeus.transfer.mysql.service.GatherWordsService;
-import com.zt.zeus.transfer.properties.CustomWordProperties;
+import com.zt.zeus.transfer.mysql.service.GatherRelatedWordsService;
+import com.zt.zeus.transfer.properties.QueryProperties;
 import com.zt.zeus.transfer.service.PullService;
 import com.zt.zeus.transfer.utils.MStringUtils;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -32,9 +31,9 @@ import java.util.stream.Collectors;
 public class SyncPullArticleHandler {
 
 
-    @Component("queryWordsByDateRange")
+    @Component("queryRelatedWordsByDateRange")
     @AllArgsConstructor
-    public static class QueryWordsByDateRange {
+    public static class QueryRelatedWordsByDateRange {
 
         private final PullService pullEsArticle;
 
@@ -42,8 +41,8 @@ public class SyncPullArticleHandler {
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
-            JSONArray queryWords = extraParams.getJSONArray("queryWords");
-            List<String> gatherWords =queryWords.stream().map(String::valueOf)
+            JSONArray queryRelatedWords = extraParams.getJSONArray("queryRelatedWords");
+            List<String> gatherRelatedWords = queryRelatedWords.stream().map(String::valueOf)
                     .map(MStringUtils::splitMinGranularityStr)
                     .flatMap(Collection::stream)
                     .distinct().collect(Collectors.toList());
@@ -52,7 +51,7 @@ public class SyncPullArticleHandler {
                     .searchModel(SearchModel.RELATED_WORDS)
                     .fromType("custom")
                     .build();
-            return pullEsArticle.pullEsArticleByDateRange(richParameters, gatherWords, startDate, endDate);
+            return pullEsArticle.pullEsArticleByDateRange(richParameters, gatherRelatedWords, startDate, endDate);
         }
     }
 
@@ -83,45 +82,45 @@ public class SyncPullArticleHandler {
     public static class CustomAuthorsByDateRange {
 
         private final PullService pullEsArticle;
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
         public long handlerData(JSONObject extraParams) {
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
-            List<String> authors = customWordProperties.getAuthor().stream()
+            List<String> authors = queryProperties.getAuthorQuery().getAuthor().stream()
                     .distinct().collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.AUTHOR)
                     .fromType("custom")
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getAuthorQuery().getCarrier())
                     .build();
             return pullEsArticle.pullEsArticleByDateRange(richParameters, authors, startDate, endDate);
         }
     }
 
-    @Component("customWordsByDateRange")
+    @Component("customRelatedWordsByDateRange")
     @AllArgsConstructor
-    public static class CustomWordsByDateRange {
+    public static class CustomRelatedWordsByDateRange {
 
         private final PullService pullEsArticle;
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
         public long handlerData(JSONObject extraParams) {
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
-            List<String> gatherWords = customWordProperties.getWord().stream().map(MStringUtils::splitMinGranularityStr)
+            List<String> gatherRelatedWords = queryProperties.getRelatedQuery().getRelated().stream().map(MStringUtils::splitMinGranularityStr)
                     .flatMap(Collection::stream)
                     .distinct().collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.RELATED_WORDS)
                     .fromType("custom")
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getRelatedQuery().getCarrier())
                     .build();
-            return pullEsArticle.pullEsArticleByDateRange(richParameters, gatherWords, startDate, endDate);
+            return pullEsArticle.pullEsArticleByDateRange(richParameters, gatherRelatedWords, startDate, endDate);
         }
     }
 
@@ -133,7 +132,7 @@ public class SyncPullArticleHandler {
 
         private final AuthorService authorService;
 
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
         @Override
         protected long handleDataOfPerPage(List<Author> list, int pageNumber, JSONObject extraParams) {
@@ -146,7 +145,7 @@ public class SyncPullArticleHandler {
                     .storageMode(storageMode)
                     .searchModel(SearchModel.AUTHOR)
                     .fromType("custom")
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getAuthorQuery().getCarrier())
                     .build();
             return pullEsArticle.pullEsArticleByDateRange(richParameters, authors, startDate, endDate);
         }
@@ -157,38 +156,38 @@ public class SyncPullArticleHandler {
         }
     }
 
-    @Component("gatherWordsByDateRange")
+    @Component("gatherRelatedWordsByDateRange")
     @AllArgsConstructor
-    public static class GatherWordsByDateRange extends PageHandler<GatherWordDto> {
+    public static class GatherRelatedWordsByDateRange extends PageHandler<GatherRelatedWordDto> {
 
         private final PullService pullEsArticle;
 
-        private final GatherWordsService gatherWordsService;
+        private final GatherRelatedWordsService gatherRelatedWordsService;
 
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
 
         @Override
-        protected long handleDataOfPerPage(List<GatherWordDto> list, int pageNumber, JSONObject extraParams) {
+        protected long handleDataOfPerPage(List<GatherRelatedWordDto> list, int pageNumber, JSONObject extraParams) {
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
-            List<String> gatherWords = list.stream().map(GatherWordDto::getName).collect(Collectors.toList());
+            List<String> gatherRelatedWords = list.stream().map(GatherRelatedWordDto::getName).collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.RELATED_WORDS)
                     .fromType("gather")
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getRelatedQuery().getCarrier())
                     .build();
-            return pullEsArticle.pullEsArticleByDateRange(richParameters, gatherWords, startDate, endDate);
+            return pullEsArticle.pullEsArticleByDateRange(richParameters, gatherRelatedWords, startDate, endDate);
         }
 
         @Override
-        protected Page<GatherWordDto> getPageList(int pageNumber, JSONObject extraParams) {
+        protected Page<GatherRelatedWordDto> getPageList(int pageNumber, JSONObject extraParams) {
             if (extraParams.getBoolean("status")) {
-                return gatherWordsService.findPageByEntityStatus(1L, pageNumber, DEFAULT_BATCH_SIZE);
+                return gatherRelatedWordsService.findPageByEntityStatus(1L, pageNumber, DEFAULT_BATCH_SIZE);
             } else {
-                return gatherWordsService.findPageByEntity(pageNumber, DEFAULT_BATCH_SIZE);
+                return gatherRelatedWordsService.findPageByEntity(pageNumber, DEFAULT_BATCH_SIZE);
             }
         }
     }
@@ -199,47 +198,47 @@ public class SyncPullArticleHandler {
 
         private final PullService pullEsArticle;
 
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
         public long handlerData(JSONObject extraParams) {
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
             String fromType = extraParams.getString("fromType");
-            List<String> authors = customWordProperties.getAuthor().stream()
+            List<String> authors = queryProperties.getAuthorQuery().getAuthor().stream()
                     .distinct().collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.AUTHOR)
                     .fromType(fromType)
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getAuthorQuery().getCarrier())
                     .build();
             return pullEsArticle.pullEsArticleByTimeRange(richParameters, authors, startDateTime, endDateTime);
         }
     }
 
-    @Component("customWordsByTimeRange")
+    @Component("customRelatedWordsByTimeRange")
     @AllArgsConstructor
-    public static class CustomWordsByTimeRange {
+    public static class CustomRelatedWordsByTimeRange {
 
         private final PullService pullEsArticle;
 
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
         public long handlerData(JSONObject extraParams) {
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
             String fromType = extraParams.getString("fromType");
-            List<String> gatherWords = customWordProperties.getWord().stream().map(MStringUtils::splitMinGranularityStr)
+            List<String> gatherRelatedWords = queryProperties.getRelatedQuery().getRelated().stream().map(MStringUtils::splitMinGranularityStr)
                     .flatMap(Collection::stream)
                     .distinct().collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.RELATED_WORDS)
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getRelatedQuery().getCarrier())
                     .fromType(fromType).build();
-            return pullEsArticle.pullEsArticleByTimeRange(richParameters, gatherWords, startDateTime, endDateTime);
+            return pullEsArticle.pullEsArticleByTimeRange(richParameters, gatherRelatedWords, startDateTime, endDateTime);
         }
     }
 
@@ -251,7 +250,7 @@ public class SyncPullArticleHandler {
 
         private final AuthorService authorService;
 
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
         @Override
         protected long handleDataOfPerPage(List<Author> list, int pageNumber, JSONObject extraParams) {
@@ -264,7 +263,7 @@ public class SyncPullArticleHandler {
             RichParameters richParameters = RichParameters.builder().storageMode(storageMode)
                     .searchModel(SearchModel.AUTHOR)
                     .fromType(fromType)
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getAuthorQuery().getCarrier())
                     .build();
             return pullEsArticle.pullEsArticleByTimeRange(richParameters, authors, startDateTime, endDateTime);
         }
@@ -275,38 +274,38 @@ public class SyncPullArticleHandler {
         }
     }
 
-    @Component("gatherWordsByTimeRange")
+    @Component("gatherRelatedWordsByTimeRange")
     @AllArgsConstructor
-    public static class GatherWordsByTimeRange extends PageHandler<GatherWordDto> {
+    public static class GatherRelatedWordsByTimeRange extends PageHandler<GatherRelatedWordDto> {
 
         private final PullService pullEsArticle;
 
-        private final GatherWordsService gatherWordsService;
+        private final GatherRelatedWordsService gatherRelatedWordsService;
 
-        private final CustomWordProperties customWordProperties;
+        private final QueryProperties queryProperties;
 
         @Override
-        protected long handleDataOfPerPage(List<GatherWordDto> list, int pageNumber, JSONObject extraParams) {
+        protected long handleDataOfPerPage(List<GatherRelatedWordDto> list, int pageNumber, JSONObject extraParams) {
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
             String fromType = extraParams.getString("fromType");
-            List<String> gatherWords = list.stream().map(GatherWordDto::getName).collect(Collectors.toList());
+            List<String> gatherRelatedWords = list.stream().map(GatherRelatedWordDto::getName).collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.RELATED_WORDS)
                     .fromType(fromType)
-                    .carrier(customWordProperties.getCarrier())
+                    .carrier(queryProperties.getRelatedQuery().getCarrier())
                     .build();
-            return pullEsArticle.pullEsArticleByTimeRange(richParameters, gatherWords, startDateTime, endDateTime);
+            return pullEsArticle.pullEsArticleByTimeRange(richParameters, gatherRelatedWords, startDateTime, endDateTime);
         }
 
         @Override
-        protected Page<GatherWordDto> getPageList(int pageNumber, JSONObject extraParams) {
+        protected Page<GatherRelatedWordDto> getPageList(int pageNumber, JSONObject extraParams) {
             if (extraParams.getBoolean("status")) {
-                return gatherWordsService.findPageByEntityStatus(1L, pageNumber, DEFAULT_BATCH_SIZE);
+                return gatherRelatedWordsService.findPageByEntityStatus(1L, pageNumber, DEFAULT_BATCH_SIZE);
             } else {
-                return gatherWordsService.findPageByEntity(pageNumber, DEFAULT_BATCH_SIZE);
+                return gatherRelatedWordsService.findPageByEntity(pageNumber, DEFAULT_BATCH_SIZE);
             }
         }
     }

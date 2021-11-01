@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class GatherWordDto {
+public class GatherRelatedWordDto {
     private Long id;
 
     /**
@@ -15,7 +15,7 @@ public class GatherWordDto {
      */
     private String name;
 
-    public GatherWordDto(String name) {
+    public GatherRelatedWordDto(String name) {
         this.name = name;
     }
 }

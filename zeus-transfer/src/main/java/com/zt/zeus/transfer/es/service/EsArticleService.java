@@ -6,6 +6,7 @@ import com.zt.zeus.transfer.enums.Carrier;
 import com.zt.zeus.transfer.enums.SearchModel;
 import com.zt.zeus.transfer.es.domain.EsArticle;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,6 +17,8 @@ import java.util.List;
  */
 public interface EsArticleService {
 
+
+    List<EsArticle> findIdEsArticlePage(List<String> articleIds, LocalDate localDate);
     /**
      * 根据相关词获取所有数据文章列表
      *

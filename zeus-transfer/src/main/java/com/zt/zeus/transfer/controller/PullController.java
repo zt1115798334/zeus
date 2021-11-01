@@ -3,8 +3,10 @@ package com.zt.zeus.transfer.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.zt.zeus.transfer.base.controller.BaseResultMessage;
 import com.zt.zeus.transfer.base.controller.ResultMessage;
+import com.zt.zeus.transfer.custom.RichParameters;
 import com.zt.zeus.transfer.enums.StorageMode;
 import com.zt.zeus.transfer.handler.SyncPullArticleHandler;
+import com.zt.zeus.transfer.service.PullService;
 import com.zt.zeus.transfer.utils.DateUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,14 +37,16 @@ import java.util.List;
 @RequestMapping("api/pull")
 public class PullController extends BaseResultMessage {
 
-    @Resource(name = "customWordsByDateRange")
-    private final SyncPullArticleHandler.CustomWordsByDateRange customWordsByDateRange;
+    private final PullService pullService;
 
-    @Resource(name = "queryWordsByDateRange")
-    private final SyncPullArticleHandler.QueryWordsByDateRange queryWordsByDateRange;
+    @Resource(name = "customRelatedWordsByDateRange")
+    private final SyncPullArticleHandler.CustomRelatedWordsByDateRange customRelatedWordsByDateRange;
 
-    @Resource(name = "gatherWordsByDateRange")
-    private final SyncPullArticleHandler.GatherWordsByDateRange gatherWordsByDateRange;
+    @Resource(name = "queryRelatedWordsByDateRange")
+    private final SyncPullArticleHandler.QueryRelatedWordsByDateRange queryRelatedWordsByDateRange;
+
+    @Resource(name = "gatherRelatedWordsByDateRange")
+    private final SyncPullArticleHandler.GatherRelatedWordsByDateRange gatherRelatedWordsByDateRange;
 
     @Resource(name = "customAuthorsByDateRange")
     private final SyncPullArticleHandler.CustomAuthorsByDateRange customAuthorsByDateRange;
@@ -53,12 +57,26 @@ public class PullController extends BaseResultMessage {
     @Resource(name = "gatherAuthorsByDateRange")
     private final SyncPullArticleHandler.GatherAuthorsByDateRange gatherAuthorsByDateRange;
 
-    @ApiOperation(value = "通过自定义词拉取数据")
-
-    @PostMapping(value = "pullArticleOfCustomWords",
+    @ApiOperation(value = "通过文章id拉取数据")
+    @PostMapping(value = "pullArticleOfCustomArticles",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultMessage pullArticleOfCustomWords(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+    public ResultMessage pullArticleOfCustomArticles(@ApiParam(name = "storageMode", value = "存储项", required = true)
+                                                     @RequestParam StorageMode storageMode,
+                                                     @ApiParam(name = "localDate", value = "时间 格式：yyyy-MM-dd", required = true)
+                                                     @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                     @RequestParam LocalDate localDate,
+                                                     @ApiParam(name = "articleIds", value = "文章id集合", required = true)
+                                                     @RequestParam List<String> articleIds) {
+        long result = pullService.pullEsArticleByArticleIds(RichParameters.builder().storageMode(storageMode).build(), articleIds, localDate);
+        return success(result);
+    }
+
+    @ApiOperation(value = "通过自定义词拉取数据")
+    @PostMapping(value = "pullArticleOfCustomRelatedWords",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResultMessage pullArticleOfCustomRelatedWords(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
                                                   @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
                                                   @RequestParam LocalDate startDate,
                                                   @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
@@ -70,15 +88,15 @@ public class PullController extends BaseResultMessage {
         extraParams.put("storageMode", storageMode);
         extraParams.put("startDate", startDate);
         extraParams.put("endDate", endDate);
-        long handlerData = customWordsByDateRange.handlerData(extraParams);
-        return success(handlerData);
+        long result = customRelatedWordsByDateRange.handlerData(extraParams);
+        return success(result);
     }
 
     @ApiOperation(value = "通过搜索词拉取数据")
-    @PostMapping(value = "pullArticleOfQueryWords",
+    @PostMapping(value = "pullArticleOfQueryRelatedWords",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultMessage pullArticleOfQueryWords(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+    public ResultMessage pullArticleOfQueryRelatedWords(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
                                                  @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
                                                  @RequestParam LocalDate startDate,
                                                  @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
@@ -86,23 +104,23 @@ public class PullController extends BaseResultMessage {
                                                  @RequestParam LocalDate endDate,
                                                  @ApiParam(name = "storageMode", value = "存储项", required = true)
                                                  @RequestParam StorageMode storageMode,
-                                                 @ApiParam(name = "queryWords", value = "查询词", required = true)
-                                                 @RequestParam List<String> queryWords) {
+                                                 @ApiParam(name = "queryRelatedWords", value = "查询词", required = true)
+                                                 @RequestParam List<String> queryRelatedWords) {
         JSONObject extraParams = new JSONObject();
         extraParams.put("storageMode", storageMode);
         extraParams.put("startDate", startDate);
         extraParams.put("endDate", endDate);
-        extraParams.put("queryWords", queryWords);
-        long handlerData = queryWordsByDateRange.handlerData(extraParams);
-        return success(handlerData);
+        extraParams.put("queryRelatedWords", queryRelatedWords);
+        long result = queryRelatedWordsByDateRange.handlerData(extraParams);
+        return success(result);
     }
 
 
     @ApiOperation(value = "通过采集词拉取数据")
-    @PostMapping(value = "pullArticleOfGatherWords",
+    @PostMapping(value = "pullArticleOfGatherRelatedWords",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResultMessage pullArticleOfGatherWords(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+    public ResultMessage pullArticleOfGatherRelatedWords(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
                                                   @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
                                                   @RequestParam LocalDate startDate,
                                                   @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
@@ -117,7 +135,7 @@ public class PullController extends BaseResultMessage {
         extraParams.put("startDate", startDate);
         extraParams.put("endDate", endDate);
         extraParams.put("status", status);
-        gatherWordsByDateRange.handle(extraParams);
+        long result =gatherRelatedWordsByDateRange.handle(extraParams);
         return success();
     }
 
@@ -137,8 +155,8 @@ public class PullController extends BaseResultMessage {
         extraParams.put("storageMode", storageMode);
         extraParams.put("startDate", startDate);
         extraParams.put("endDate", endDate);
-        long handlerData = customAuthorsByDateRange.handlerData(extraParams);
-        return success(handlerData);
+        long result  = customAuthorsByDateRange.handlerData(extraParams);
+        return success(result);
     }
 
     @ApiOperation(value = "通过搜索作者拉取数据")
@@ -146,15 +164,15 @@ public class PullController extends BaseResultMessage {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResultMessage pullArticleOfQueryAuthors(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
-                                                 @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
-                                                 @RequestParam LocalDate startDate,
-                                                 @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
-                                                 @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
-                                                 @RequestParam LocalDate endDate,
-                                                 @ApiParam(name = "storageMode", value = "存储项", required = true)
-                                                 @RequestParam StorageMode storageMode,
-                                                 @ApiParam(name = "queryAuthors", value = "查询词", required = true)
-                                                 @RequestParam List<String> queryAuthors) {
+                                                   @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                   @RequestParam LocalDate startDate,
+                                                   @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
+                                                   @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                   @RequestParam LocalDate endDate,
+                                                   @ApiParam(name = "storageMode", value = "存储项", required = true)
+                                                   @RequestParam StorageMode storageMode,
+                                                   @ApiParam(name = "queryAuthors", value = "查询词", required = true)
+                                                   @RequestParam List<String> queryAuthors) {
         JSONObject extraParams = new JSONObject();
         extraParams.put("storageMode", storageMode);
         extraParams.put("startDate", startDate);

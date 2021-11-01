@@ -49,12 +49,12 @@ public class QuartzConfig {
 
 
     @Bean(name = "syncPullArticleOfCustomWordJobDetail")
-    public MethodInvokingJobDetailFactoryBean syncPullArticleOfCustomWordJobDetail(SyncPullArticleOfCustomWordJob syncPullArticleOfCustomWordJob) {
+    public MethodInvokingJobDetailFactoryBean syncPullArticleOfCustomWordJobDetail(SyncPullArticleOfCustomRelatedWordJob syncPullArticleOfCustomRelatedWordJob) {
         MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
         // 是否并发执行
         jobDetail.setConcurrent(false);
         // 为需要执行的实体类对应的对象
-        jobDetail.setTargetObject(syncPullArticleOfCustomWordJob);
+        jobDetail.setTargetObject(syncPullArticleOfCustomRelatedWordJob);
         // 需要执行的方法
         jobDetail.setTargetMethod("execute");
         return jobDetail;
@@ -99,12 +99,12 @@ public class QuartzConfig {
 
 
     @Bean(name = "syncPullArticleOfGatherWordJobDetail")
-    public MethodInvokingJobDetailFactoryBean syncPullArticleOfGatherWordJobDetail(SyncPullArticleOfGatherWordJob syncPullArticleOfGatherWordJob) {
+    public MethodInvokingJobDetailFactoryBean syncPullArticleOfGatherWordJobDetail(SyncPullArticleOfGatherRelatedWordJob syncPullArticleOfGatherRelatedWordJob) {
         MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
         // 是否并发执行
         jobDetail.setConcurrent(false);
         // 为需要执行的实体类对应的对象
-        jobDetail.setTargetObject(syncPullArticleOfGatherWordJob);
+        jobDetail.setTargetObject(syncPullArticleOfGatherRelatedWordJob);
         // 需要执行的方法
         jobDetail.setTargetMethod("execute");
         return jobDetail;

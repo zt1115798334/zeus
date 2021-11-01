@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface PullService {
 
+    long pullEsArticleByArticleIds(RichParameters richParameters, List<String> articleIds, LocalDate localDate);
+
     long pullEsArticleByDateRange(RichParameters richParameters, List<String> words, LocalDate startDate, LocalDate endDate);
 
     long pullEsArticleByTimeRange(RichParameters richParameters, List<String> words, LocalDateTime startDateTime, LocalDateTime endDateTime);
