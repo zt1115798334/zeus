@@ -7,6 +7,7 @@ import com.google.common.base.Objects;
 import com.zt.zeus.transfer.custom.CustomPage;
 import com.zt.zeus.transfer.enums.Carrier;
 import com.zt.zeus.transfer.enums.SearchModel;
+import com.zt.zeus.transfer.enums.SearchRange;
 import com.zt.zeus.transfer.enums.SearchType;
 import com.zt.zeus.transfer.es.domain.EsArticle;
 import com.zt.zeus.transfer.es.service.EsArticleService;
@@ -115,7 +116,13 @@ public class EsArticleServiceImpl implements EsArticleService {
             params.putAll(EsParamsUtils.getQueryAuthor(wordJa));
         }
         params.putAll(EsParamsUtils.getQueryScrollIdParams(scrollId));
-        params.putAll(EsParamsUtils.getQueryTimeParams(startDateTime, endDateTime));
+        if (Objects.equal(esProperties.getSearchRange(), SearchRange.CREATE_TIME)) {
+            params.putAll(EsParamsUtils.getQueryCreatedTimeParams(startDateTime, endDateTime));
+        }else if (Objects.equal(esProperties.getSearchRange(), SearchRange.GATHER_TIME)) {
+            params.putAll(EsParamsUtils.getQueryGatherTimeParams(startDateTime, endDateTime));
+        }else{
+            params.putAll(EsParamsUtils.getQueryTimeParams(startDateTime, endDateTime));
+        }
         params.put("searchType", "all");
         if (carrier != null && !carrier.isEmpty()) {
             List<Integer> carrierCode = carrier.stream().map(Carrier::getCode).collect(Collectors.toList());

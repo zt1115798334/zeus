@@ -92,6 +92,18 @@ public class EsParamsUtils {
         csJo.put(ES_END_TIME, DateUtils.formatDateTime(endTime));
         return csJo;
     }
+    public static JSONObject getQueryGatherTimeParams(LocalDateTime startTime, LocalDateTime endTime) {
+        JSONObject csJo = new JSONObject();
+        csJo.put(ES_START_TIME, DateUtils.formatDateTime(startTime));
+        csJo.put(ES_END_TIME, DateUtils.formatDateTime(endTime));
+        return csJo;
+    }
+    public static JSONObject getQueryCreatedTimeParams(LocalDateTime startTime, LocalDateTime endTime) {
+        JSONObject csJo = new JSONObject();
+        csJo.put(ES_START_TIME, DateUtils.formatDateTime(startTime));
+        csJo.put(ES_END_TIME, DateUtils.formatDateTime(endTime));
+        return csJo;
+    }
 
     public static JSONObject getQueryScrollIdParams(String scrollId) {
         JSONObject csJo = new JSONObject();

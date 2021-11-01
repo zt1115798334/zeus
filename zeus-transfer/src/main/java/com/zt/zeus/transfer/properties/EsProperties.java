@@ -1,6 +1,7 @@
 package com.zt.zeus.transfer.properties;
 
 import com.zt.zeus.transfer.enums.ReadModel;
+import com.zt.zeus.transfer.enums.SearchRange;
 import com.zt.zeus.transfer.enums.SearchType;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,6 +32,8 @@ public class EsProperties {
     private String analysis;
 
     private SearchType searchType;
+
+    private SearchRange searchRange;
 
     private ReadModel readModel;
 

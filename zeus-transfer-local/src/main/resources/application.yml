@@ -63,6 +63,7 @@ custom:
     read-model: ${CUSTOM_ES_READ_MODEL:File}
     analysis: ${CUSTOM_ES_ANALYSIS:http://127.0.0.1:8081}
     search-type: ${CUSTOM_ES_SEARCH_TYPE:EXACT}
+    search-range: PUBLISH_TIME
     es5: #es配置信息
       #      key: yq_test
       key: ${CUSTOM_ES_ES5_KEY:yq_zkdj}
