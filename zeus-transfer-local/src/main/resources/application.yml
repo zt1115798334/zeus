@@ -50,12 +50,13 @@ logging:
     name: /logs/${spring.application.name}/${spring.application.name}.log
 custom:
   query:
+    filter-word: 科协,科学技术
     related-query:
-      related: ${CUSTOM_QUERY_RELATED_QUERY_WORD:[中国,美国]}
-      carrier: ${CUSTOM_QUERY_RELATED_QUERY_CARRIER:}
+      related:
+      carrier:
     author-query:
-      author: ${CUSTOM_QUERY_AUTHOR_QUERY_AUTHOR:[中国,美国]}
-      carrier: ${CUSTOM_QUERY_AUTHOR_QUERY_CARRIER:[WE_CHAT]}
+      author:
+      carrier:
   es:
     version: 5
     page-size: ${CUSTOM_ES_PAGE_SIZE:500}

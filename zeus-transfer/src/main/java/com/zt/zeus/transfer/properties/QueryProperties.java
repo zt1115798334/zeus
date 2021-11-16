@@ -18,6 +18,8 @@ public class QueryProperties {
     private QueryInfo relatedQuery;
     private QueryInfo authorQuery;
 
+    private List<String> filterWord;
+
     @ToString
     @Getter
     @Setter

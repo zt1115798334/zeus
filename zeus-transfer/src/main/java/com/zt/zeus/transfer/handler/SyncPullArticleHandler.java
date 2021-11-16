@@ -2,6 +2,7 @@ package com.zt.zeus.transfer.handler;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.Lists;
 import com.zt.zeus.transfer.base.handler.page.PageHandler;
 import com.zt.zeus.transfer.custom.RichParameters;
 import com.zt.zeus.transfer.dto.GatherRelatedWordDto;
@@ -21,6 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -108,11 +110,14 @@ public class SyncPullArticleHandler {
         private final QueryProperties queryProperties;
 
         public long handlerData(JSONObject extraParams) {
+            List<String> filterWord = queryProperties.getFilterWord();
+
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
             List<String> gatherRelatedWords = queryProperties.getRelatedQuery().getRelated().stream().map(MStringUtils::splitMinGranularityStr)
                     .flatMap(Collection::stream)
+                    .filter(word -> filterWord.stream().noneMatch(s -> !Objects.equals(s, word) && word.contains(s)))
                     .distinct().collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
@@ -169,10 +174,13 @@ public class SyncPullArticleHandler {
 
         @Override
         protected long handleDataOfPerPage(List<GatherRelatedWordDto> list, int pageNumber, JSONObject extraParams) {
+            List<String> filterWord = queryProperties.getFilterWord();
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDate startDate = extraParams.getObject("startDate", LocalDate.class);
             LocalDate endDate = extraParams.getObject("endDate", LocalDate.class);
-            List<String> gatherRelatedWords = list.stream().map(GatherRelatedWordDto::getName).collect(Collectors.toList());
+            List<String> gatherRelatedWords = list.stream().map(GatherRelatedWordDto::getName)
+                    .filter(word -> filterWord.stream().noneMatch(s -> !Objects.equals(s, word) && word.contains(s)))
+                    .collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.RELATED_WORDS)
@@ -226,13 +234,16 @@ public class SyncPullArticleHandler {
         private final QueryProperties queryProperties;
 
         public long handlerData(JSONObject extraParams) {
+            List<String> filterWord = queryProperties.getFilterWord();
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
             String fromType = extraParams.getString("fromType");
             List<String> gatherRelatedWords = queryProperties.getRelatedQuery().getRelated().stream().map(MStringUtils::splitMinGranularityStr)
                     .flatMap(Collection::stream)
-                    .distinct().collect(Collectors.toList());
+                    .distinct()
+                    .filter(word -> filterWord.stream().noneMatch(s -> !Objects.equals(s, word) && word.contains(s)))
+                    .collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.RELATED_WORDS)
@@ -286,11 +297,14 @@ public class SyncPullArticleHandler {
 
         @Override
         protected long handleDataOfPerPage(List<GatherRelatedWordDto> list, int pageNumber, JSONObject extraParams) {
+            List<String> filterWord = queryProperties.getFilterWord();
             StorageMode storageMode = extraParams.getObject("storageMode", StorageMode.class);
             LocalDateTime startDateTime = extraParams.getObject("startDateTime", LocalDateTime.class);
             LocalDateTime endDateTime = extraParams.getObject("endDateTime", LocalDateTime.class);
             String fromType = extraParams.getString("fromType");
-            List<String> gatherRelatedWords = list.stream().map(GatherRelatedWordDto::getName).collect(Collectors.toList());
+            List<String> gatherRelatedWords = list.stream().map(GatherRelatedWordDto::getName)
+                    .filter(word -> filterWord.stream().noneMatch(s -> !Objects.equals(s, word) && word.contains(s)))
+                    .collect(Collectors.toList());
             RichParameters richParameters = RichParameters.builder()
                     .storageMode(storageMode)
                     .searchModel(SearchModel.RELATED_WORDS)

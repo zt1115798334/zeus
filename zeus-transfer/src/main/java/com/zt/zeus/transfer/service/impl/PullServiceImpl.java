@@ -9,6 +9,7 @@ import com.zt.zeus.transfer.custom.CustomPage;
 import com.zt.zeus.transfer.custom.RichParameters;
 import com.zt.zeus.transfer.dto.FileInfoDto;
 import com.zt.zeus.transfer.enums.Carrier;
+import com.zt.zeus.transfer.enums.Emotion;
 import com.zt.zeus.transfer.enums.StorageMode;
 import com.zt.zeus.transfer.es.domain.EsArticle;
 import com.zt.zeus.transfer.es.service.EsArticleService;
@@ -221,6 +222,13 @@ public class PullServiceImpl implements PullService {
 
     public static String getArticleJson(EsArticle esArticle) {
         JSONObject params = new JSONObject();
+        if (Objects.equal(esArticle.getEmotion(), Emotion.POSITIVE.getType())) {
+            params.put("Positive", 1);
+        }else if (Objects.equal(esArticle.getEmotion(), Emotion.NEGATIVE.getType())) {
+            params.put("Negative", 1);
+        }else if (Objects.equal(esArticle.getEmotion(), Emotion.NEUTRAL.getType())) {
+            params.put("Neutral", 1);
+        }
         params.put("SpiderInfo", "军犬舆情平台数据推送");
         params.put("ConfigInfo", "");
         params.put("ColumnURL", "");

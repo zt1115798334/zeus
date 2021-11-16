@@ -105,6 +105,9 @@ public class EsArticleServiceImpl implements EsArticleService {
                                                           String scrollId,
                                                           LocalDateTime startDateTime, LocalDateTime endDateTime,
                                                           int pageSize, List<Carrier> carrier) {
+        if (wordJa.isEmpty()) {
+            return new CustomPage<>();
+        }
         JSONObject params = new JSONObject();
         if (Objects.equal(searchModel, SearchModel.RELATED_WORDS)) {
             if (Objects.equal(esProperties.getSearchType(), SearchType.EXACT)) {
