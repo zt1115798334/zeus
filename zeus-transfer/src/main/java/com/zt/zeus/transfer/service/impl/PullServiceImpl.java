@@ -17,6 +17,7 @@ import com.zt.zeus.transfer.properties.EsProperties;
 import com.zt.zeus.transfer.service.PullService;
 import com.zt.zeus.transfer.service.callable.SendInInterface;
 import com.zt.zeus.transfer.service.callable.WriteInLocal;
+import com.zt.zeus.transfer.utils.ArticleUtils;
 import com.zt.zeus.transfer.utils.DateUtils;
 import com.zt.zeus.transfer.utils.MD5Utils;
 import com.zt.zeus.transfer.utils.TheadUtils;
@@ -57,9 +58,9 @@ public class PullServiceImpl implements PullService {
         AtomicInteger atomicInteger = new AtomicInteger();
         List<Future<Long>> futureList = articleList.stream().map(esArticle -> {
             String fileName = esArticle.getId();
-            FileInfoDto fileInfoDto = FileInfoDto.builder().filename(fileName).content(getArticleJson(esArticle)).build();
+            FileInfoDto fileInfoDto = FileInfoDto.builder().filename(fileName).content(ArticleUtils.getArticleJson(esArticle)).build();
             Callable<Long> callable = Objects.equal(storageMode, StorageMode.LOCAL) ?
-                    new WriteInLocal(localDate, getArticleJson(esArticle), esProperties.getFilePath(), fileName, atomicInteger)
+                    new WriteInLocal(localDate, ArticleUtils.getArticleJson(esArticle), esProperties.getFilePath(), fileName, atomicInteger)
                     : new SendInInterface(rateLimiter, analysisService, fileInfoDto);
             return executorService.submit(callable);
         }).collect(Collectors.toList());
@@ -169,9 +170,9 @@ public class PullServiceImpl implements PullService {
                 RateLimiter rateLimiter = RateLimiter.create(50, 1, NANOSECONDS);
                 List<Future<Long>> futureList = articleList.stream().map(esArticle -> {
                     String fileName = esArticle.getId();
-                    FileInfoDto fileInfoDto = FileInfoDto.builder().filename(fileName).content(getArticleJson(esArticle)).build();
+                    FileInfoDto fileInfoDto = FileInfoDto.builder().filename(fileName).content(ArticleUtils.getArticleJson(esArticle)).build();
                     Callable<Long> callable = Objects.equal(storageMode, StorageMode.LOCAL) ?
-                            new WriteInLocal(startDateTime.toLocalDate(), getArticleJson(esArticle), filePath, fileName, atomicInteger)
+                            new WriteInLocal(startDateTime.toLocalDate(), ArticleUtils.getArticleJson(esArticle), filePath, fileName, atomicInteger)
                             : new SendInInterface(rateLimiter, analysisService, fileInfoDto);
                     return executorService.submit(callable);
                 }).collect(Collectors.toList());
@@ -220,38 +221,7 @@ public class PullServiceImpl implements PullService {
         }
     }
 
-    public static String getArticleJson(EsArticle esArticle) {
-        JSONObject params = new JSONObject();
-        if (Objects.equal(esArticle.getEmotion(), Emotion.POSITIVE.getType())) {
-            params.put("Positive", 1);
-        }else if (Objects.equal(esArticle.getEmotion(), Emotion.NEGATIVE.getType())) {
-            params.put("Negative", 1);
-        }else if (Objects.equal(esArticle.getEmotion(), Emotion.NEUTRAL.getType())) {
-            params.put("Neutral", 1);
-        }
-        params.put("SpiderInfo", "军犬舆情平台数据推送");
-        params.put("ConfigInfo", "");
-        params.put("ColumnURL", "");
-        params.put("RegularName", esArticle.getSiteName());
-        params.put("ConfigTag", "");
-        params.put("KeywordID", "");
-        params.put("Keyword", "");
-        params.put("KeywordTag", "");
-        params.put("Country", esArticle.getRegion());
-        params.put("Carrie", esArticle.getCarrier());
-        params.put("ColumnName", esArticle.getColumnName());
-        params.put("Profession", "1000");
-        params.put("Area", "");
-        params.put("GatherTime", DateUtils.formatDateTime(esArticle.getGatherTime()));
-        params.put("OrgURL", esArticle.getUrl());
-        params.put("URL", esArticle.getUrl());
-        params.put("PublishTime", DateUtils.formatDateTime(esArticle.getPublishTime()));
-        params.put("Author", esArticle.getAuthor());
-        params.put("Content", esArticle.getContent());
-        params.put("Title", esArticle.getTitle());
-        params.put("SiteName", esArticle.getSiteName());
-        return params.toJSONString();
-    }
+
 
     public static void main(String[] args) {
         System.out.println(MD5Utils.MD5("https://mp.weixin.qq.com/s?__biz=MTQzMTE0MjcyMQ==&mid=2666983584&idx=2&sn=f657c85890ac842b098bb846220c172c"));

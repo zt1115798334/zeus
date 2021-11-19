@@ -61,7 +61,7 @@ services:
       - SPRING_RABBITMQ_PASSWORD=admin
       - SPRING_PROFILES_ACTIVE=git
     ports:
-      - 8771:8771
+      - "8771:8771"
     depends_on:
       - rabbitmq
       - zeus-eureka-1

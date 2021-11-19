@@ -99,4 +99,37 @@ public class ArticleUtils {
         }
         return esArticle;
     }
+
+    public static String getArticleJson(EsArticle esArticle) {
+        JSONObject params = new JSONObject();
+        if (com.google.common.base.Objects.equal(esArticle.getEmotion(), Emotion.POSITIVE.getType())) {
+            params.put("Positive", 1);
+        }else if (com.google.common.base.Objects.equal(esArticle.getEmotion(), Emotion.NEGATIVE.getType())) {
+            params.put("Negative", 1);
+        }else if (com.google.common.base.Objects.equal(esArticle.getEmotion(), Emotion.NEUTRAL.getType())) {
+            params.put("Neutral", 1);
+        }
+        params.put("SpiderInfo", "军犬舆情平台数据推送");
+        params.put("ConfigInfo", "");
+        params.put("ColumnURL", "");
+        params.put("RegularName", esArticle.getSiteName());
+        params.put("ConfigTag", "");
+        params.put("KeywordID", "");
+        params.put("Keyword", "");
+        params.put("KeywordTag", "");
+        params.put("Country", esArticle.getRegion());
+        params.put("Carrie", esArticle.getCarrier());
+        params.put("ColumnName", esArticle.getColumnName());
+        params.put("Profession", "1000");
+        params.put("Area", "");
+        params.put("GatherTime", DateUtils.formatDateTime(esArticle.getGatherTime()));
+        params.put("OrgURL", esArticle.getUrl());
+        params.put("URL", esArticle.getUrl());
+        params.put("PublishTime", DateUtils.formatDateTime(esArticle.getPublishTime()));
+        params.put("Author", esArticle.getAuthor());
+        params.put("Content", esArticle.getContent());
+        params.put("Title", esArticle.getTitle());
+        params.put("SiteName", esArticle.getSiteName());
+        return params.toJSONString();
+    }
 }
