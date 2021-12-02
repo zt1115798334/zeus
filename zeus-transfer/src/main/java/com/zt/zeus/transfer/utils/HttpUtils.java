@@ -209,7 +209,7 @@ public class HttpUtils {
         String responseBody = httpClient.execute(httpRequestBase, httpResponse -> {
             int status = httpResponse.getStatusLine().getStatusCode();
             if (status < 200 || status >= 300) {
-                log.error("请求失败，URL：{}, Headers：{},Params：{}, ", uri, headerMap, paramMap);
+                log.error("请求失败, 状态码：{}, URL：{}, Headers：{}, Params：{}, ",status, uri, headerMap, paramMap);
             }
             HttpEntity entity = httpResponse.getEntity();
             return entity != null ? EntityUtils.toString(entity) : null;
@@ -221,7 +221,7 @@ public class HttpUtils {
         String responseBody = httpClient.execute(httpRequestBase, httpResponse -> {
             int status = httpResponse.getStatusLine().getStatusCode();
             if (status < 200 || status >= 300) {
-                log.error("请求失败，URL：{}, Headers：{},Params：{}, ", uri, headerMap, paramText);
+                log.error("请求失败, 状态码：{}, URL：{}, Headers：{},Params：{}, ",status, uri, headerMap, paramText);
             }
             HttpEntity entity = httpResponse.getEntity();
             return entity != null ? EntityUtils.toString(entity) : null;
