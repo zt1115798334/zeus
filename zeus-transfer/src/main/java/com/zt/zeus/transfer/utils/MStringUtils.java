@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -178,5 +180,23 @@ public class MStringUtils {
         return Optional.ofNullable(text).map(str -> Arrays.stream(text.replace("#", "").split(","))
                 .filter(StringUtils::isNotBlank)
                 .map(Long::valueOf).collect(Collectors.toList())).orElse(Lists.newArrayList());
+    }
+
+    /**
+     * 正则提取url中的主域名
+     *
+     * @param url url
+     * @return String
+     */
+    public static String getUrlMain(String url) {
+        Pattern urlMainPattern = Pattern.compile("(?<=//|)((\\w)+\\.)+\\w+");
+        Matcher m = urlMainPattern.matcher(url);
+        String urlMain;
+        if (m.find()) {
+            urlMain = m.group();
+        } else {
+            urlMain = "default.com";
+        }
+        return urlMain;
     }
 }

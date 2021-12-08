@@ -57,6 +57,18 @@ public class PullController extends BaseResultMessage {
     @Resource(name = "gatherAuthorsByDateRange")
     private final SyncPullArticleHandler.GatherAuthorsByDateRange gatherAuthorsByDateRange;
 
+    @Resource(name = "customSiteNamesByDateRange")
+    private final SyncPullArticleHandler.CustomSiteNamesByDateRange customSiteNamesByDateRange;
+
+    @Resource(name = "querySiteNamesByDateRange")
+    private final SyncPullArticleHandler.QuerySiteNamesByDateRange querySiteNamesByDateRange;
+
+    @Resource(name = "customUrlMainsByDateRange")
+    private final SyncPullArticleHandler.CustomUrlMainsByDateRange customUrlMainsByDateRange;
+
+    @Resource(name = "queryUrlMainsByDateRange")
+    private final SyncPullArticleHandler.QueryUrlMainsByDateRange queryUrlMainsByDateRange;
+
     @ApiOperation(value = "通过文章id拉取数据")
     @PostMapping(value = "pullArticleOfCustomArticles",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -72,6 +84,9 @@ public class PullController extends BaseResultMessage {
         return success(result);
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 相关词
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation(value = "通过自定义词拉取数据")
     @PostMapping(value = "pullArticleOfCustomRelatedWords",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -115,7 +130,6 @@ public class PullController extends BaseResultMessage {
         return success(result);
     }
 
-
     @ApiOperation(value = "通过采集词拉取数据")
     @PostMapping(value = "pullArticleOfGatherRelatedWords",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -139,6 +153,9 @@ public class PullController extends BaseResultMessage {
         return success();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 作者
+    ///////////////////////////////////////////////////////////////////////////
     @ApiOperation("通过自定义作者拉取数据")
     @PostMapping(value = "pullArticleOfCustomAuthors",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -202,5 +219,96 @@ public class PullController extends BaseResultMessage {
         return success();
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    // 网站名称
+    ///////////////////////////////////////////////////////////////////////////
+    @ApiOperation("通过自定义网站名称拉取数据")
+    @PostMapping(value = "pullArticleOfCustomSiteNames",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResultMessage pullArticleOfCustomSiteNames(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+                                                    @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                    @RequestParam LocalDate startDate,
+                                                    @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
+                                                    @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                    @RequestParam LocalDate endDate,
+                                                    @ApiParam(name = "storageMode", value = "存储项", required = true)
+                                                    @RequestParam StorageMode storageMode) {
+        JSONObject extraParams = new JSONObject();
+        extraParams.put("storageMode", storageMode);
+        extraParams.put("startDate", startDate);
+        extraParams.put("endDate", endDate);
+        long result  = customSiteNamesByDateRange.handlerData(extraParams);
+        return success(result);
+    }
+
+    @ApiOperation(value = "通过搜索网站拉取数据")
+    @PostMapping(value = "pullArticleOfQuerySiteNames",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResultMessage pullArticleOfQuerySiteNames(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+                                                   @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                   @RequestParam LocalDate startDate,
+                                                   @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
+                                                   @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                   @RequestParam LocalDate endDate,
+                                                   @ApiParam(name = "storageMode", value = "存储项", required = true)
+                                                   @RequestParam StorageMode storageMode,
+                                                   @ApiParam(name = "queryAuthors", value = "查询词", required = true)
+                                                   @RequestParam List<String> querySiteNames) {
+        JSONObject extraParams = new JSONObject();
+        extraParams.put("storageMode", storageMode);
+        extraParams.put("startDate", startDate);
+        extraParams.put("endDate", endDate);
+        extraParams.put("querySiteNames", querySiteNames);
+        long handlerData = querySiteNamesByDateRange.handlerData(extraParams);
+        return success(handlerData);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // 主域名名称
+    ///////////////////////////////////////////////////////////////////////////
+    @ApiOperation("通过自定义主域名名称拉取数据")
+    @PostMapping(value = "pullArticleOfCustomUrlMains",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResultMessage pullArticleOfCustomUrlMains(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+                                                     @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                     @RequestParam LocalDate startDate,
+                                                     @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
+                                                     @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                     @RequestParam LocalDate endDate,
+                                                     @ApiParam(name = "storageMode", value = "存储项", required = true)
+                                                     @RequestParam StorageMode storageMode) {
+        JSONObject extraParams = new JSONObject();
+        extraParams.put("storageMode", storageMode);
+        extraParams.put("startDate", startDate);
+        extraParams.put("endDate", endDate);
+        long result  = customUrlMainsByDateRange.handlerData(extraParams);
+        return success(result);
+    }
+
+    @ApiOperation(value = "通过搜索主域名拉取数据")
+    @PostMapping(value = "pullArticleOfQueryUrlMains",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResultMessage pullArticleOfQueryUrlMains(@ApiParam(name = "startDate", value = "开始时间 格式：yyyy-MM-dd", required = true)
+                                                    @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                    @RequestParam LocalDate startDate,
+                                                    @ApiParam(name = "endDate", value = "结束时间 格式：yyyy-MM-dd", required = true)
+                                                    @DateTimeFormat(pattern = DateUtils.DATE_FORMAT)
+                                                    @RequestParam LocalDate endDate,
+                                                    @ApiParam(name = "storageMode", value = "存储项", required = true)
+                                                    @RequestParam StorageMode storageMode,
+                                                    @ApiParam(name = "queryAuthors", value = "查询词", required = true)
+                                                    @RequestParam List<String> queryUrlMains) {
+        JSONObject extraParams = new JSONObject();
+        extraParams.put("storageMode", storageMode);
+        extraParams.put("startDate", startDate);
+        extraParams.put("endDate", endDate);
+        extraParams.put("queryUrlMains", queryUrlMains);
+        long handlerData = queryUrlMainsByDateRange.handlerData(extraParams);
+        return success(handlerData);
+    }
 
 }

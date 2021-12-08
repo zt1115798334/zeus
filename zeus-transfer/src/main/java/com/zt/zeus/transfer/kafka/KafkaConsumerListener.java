@@ -37,15 +37,17 @@ public class KafkaConsumerListener {
 
    final RateLimiter rateLimiter = RateLimiter.create(50, 1, NANOSECONDS);
 
-//    @KafkaListener(topics = {"${custom.kafka.topic}"})
-//    public void onMessage(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
-//        ExecutorService executorService = Executors.newFixedThreadPool(SysConst.AVAILABLE_PROCESSORS >> 1);
-//        log.info("获取数据条数=" + records.size());
-//        for (ConsumerRecord<String, String> record : records) {
-//            EsArticle esArticle = ArticleUtils.jsonObjectConvertEsArticle(JSONObject.parseObject(record.value()));
-//            FileInfoDto fileInfoDto = FileInfoDto.builder().filename(esArticle.getId()).content(ArticleUtils.getArticleJson(esArticle)).build();
-//            executorService.submit(new SendInInterface(rateLimiter, analysisService, fileInfoDto));
-//        }
-//        ack.acknowledge();
-//    }
+    @KafkaListener(topics = {"${custom.kafka.topic}"})
+    public void onMessage(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
+        ExecutorService executorService = Executors.newFixedThreadPool(SysConst.AVAILABLE_PROCESSORS >> 1);
+        log.info("获取数据条数=" + records.size());
+        for (ConsumerRecord<String, String> record : records) {
+            EsArticle esArticle = ArticleUtils.jsonObjectConvertEsArticle(JSONObject.parseObject(record.value()));
+            log.info(esArticle.getId());
+            FileInfoDto fileInfoDto = FileInfoDto.builder().filename(esArticle.getId()).content(ArticleUtils.getArticleJson(esArticle)).build();
+            executorService.submit(new SendInInterface(rateLimiter, analysisService, fileInfoDto));
+        }
+        executorService.shutdown();
+        ack.acknowledge();
+    }
 }

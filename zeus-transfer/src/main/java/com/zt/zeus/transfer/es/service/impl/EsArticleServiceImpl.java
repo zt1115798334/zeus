@@ -117,6 +117,10 @@ public class EsArticleServiceImpl implements EsArticleService {
             }
         } else if (Objects.equal(searchModel, SearchModel.AUTHOR)) {
             params.putAll(EsParamsUtils.getQueryAuthor(wordJa));
+        }else if (Objects.equal(searchModel, SearchModel.SITE_NAME)) {
+            params.putAll(EsParamsUtils.getQuerySiteName(wordJa));
+        }else if (Objects.equal(searchModel, SearchModel.URL_MAIN)) {
+            params.putAll(EsParamsUtils.getQueryUrlMain(wordJa));
         }
         params.putAll(EsParamsUtils.getQueryScrollIdParams(scrollId));
         if (Objects.equal(esProperties.getSearchRange(), SearchRange.CREATE_TIME)) {

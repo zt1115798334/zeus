@@ -46,6 +46,7 @@ public class EsInterfaceServiceImpl implements EsInterfaceService {
 
     @Override
     public String dataQuery(JSONObject params, int pageSize) {
+        log.info(params.toJSONString());
         String url = splicingUrlFull(pageSize).toString();
         return HttpUtils.getInstance().doPostJSON(url, params.getInnerMap()).orElse("");
     }

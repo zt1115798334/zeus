@@ -17,6 +17,8 @@ public class QueryProperties {
 
     private QueryInfo relatedQuery;
     private QueryInfo authorQuery;
+    private QueryInfo siteNameQuery;
+    private QueryInfo urlMainQuery;
 
     private List<String> filterWord;
 
@@ -26,6 +28,8 @@ public class QueryProperties {
     public static class QueryInfo {
         private List<String> related;
         private List<String> author;
+        private List<String> siteName;
+        private List<String> urlMain;
         private List<Carrier> carrier;
     }
 }

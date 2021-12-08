@@ -2,9 +2,11 @@ package com.zt.zeus.transfer.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,7 +17,7 @@ import java.util.List;
  */
 public class EsParamsUtils {
 
-    private static final String ES_SCROLL_ID= "scrollId";
+    private static final String ES_SCROLL_ID = "scrollId";
     public static final String ES_START_TIME = "start_time"; //开始时间
     public static final String ES_END_TIME = "end_time"; //结束时间
     public static final String ES_GATHER_START_TIME = "gather_start_time"; //开始时间
@@ -29,7 +31,7 @@ public class EsParamsUtils {
     private static final String ES_AUTHOR = "author"; //作者
     public static final String ES_COLUMN = "channel";
     public static final String ES_SITE_NAME = "siteName";
-    
+
     private static final String ES_SEARCH_WORDS = "searchValue"; //相关词
 
     /**
@@ -42,19 +44,37 @@ public class EsParamsUtils {
         csJo.put(ES_SEARCH_WORDS, JSONObject.parseArray(related.toJSONString(), String.class));
         return csJo;
     }
+
     public static JSONObject getQueryRelatedWordsParams(JSONArray related) {
         JSONObject csJo = new JSONObject();
         csJo.put(ES_RELATED_WORDS, JSONObject.parseArray(related.toJSONString(), String.class));
         return csJo;
     }
+
     public static JSONObject getQueryAuthor(JSONArray authorList) {
         JSONObject param = new JSONObject();
         param.put(ES_AUTHOR, JSONObject.parseArray(authorList.toJSONString(), String.class));
         return param;
     }
 
+    public static JSONObject getQuerySiteName(JSONArray siteNameList) {
+        JSONObject param = new JSONObject();
+        param.put(ES_SITE_NAME, JSONObject.parseArray(siteNameList.toJSONString(), String.class));
+        return param;
+    }
 
-    
+    public static JSONObject getQueryUrlMain(JSONArray urlMainList) {
+        List<String> urlList = JSONObject.parseArray(urlMainList.toJSONString(), String.class)
+                .stream()
+                .filter(StringUtils::isNotEmpty)
+                .map(MStringUtils::getUrlMain)
+                .collect(Collectors.toList());
+        JSONObject param = new JSONObject();
+        param.put(ES_URL_MAIL, urlList);
+        return param;
+    }
+
+
     /**
      * 载体参数
      *
@@ -66,7 +86,7 @@ public class EsParamsUtils {
         csJo.put(CARRIE, carrie);
         return csJo;
     }
-    
+
     /**
      * 站点参数
      *
@@ -92,12 +112,14 @@ public class EsParamsUtils {
         csJo.put(ES_END_TIME, DateUtils.formatDateTime(endTime));
         return csJo;
     }
+
     public static JSONObject getQueryGatherTimeParams(LocalDateTime startTime, LocalDateTime endTime) {
         JSONObject csJo = new JSONObject();
         csJo.put(ES_START_TIME, DateUtils.formatDateTime(startTime));
         csJo.put(ES_END_TIME, DateUtils.formatDateTime(endTime));
         return csJo;
     }
+
     public static JSONObject getQueryCreatedTimeParams(LocalDateTime startTime, LocalDateTime endTime) {
         JSONObject csJo = new JSONObject();
         csJo.put(ES_START_TIME, DateUtils.formatDateTime(startTime));
