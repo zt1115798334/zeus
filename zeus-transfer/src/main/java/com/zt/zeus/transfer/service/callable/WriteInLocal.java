@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,6 +29,8 @@ public class WriteInLocal implements Callable<Long> {
 
     private final AtomicInteger atomicInteger;
 
+    private final  Random random = new Random();
+
     @Override
     public Long call() {
         long start = System.currentTimeMillis();
@@ -41,14 +44,24 @@ public class WriteInLocal implements Callable<Long> {
                 log.info("路径：{},不存在，现在创建完成", realPath);
             }
         }
-        Path path = Paths.get(realPath + File.separator + fileName);
-        try (BufferedWriter writer =
-                     Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            writer.write(articleJson);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (true) {
+            Path path = Paths.get(realPath + File.separator + fileName + ".txt");
+            try (BufferedWriter writer =
+                         Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+                writer.write(articleJson);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
         long end = System.currentTimeMillis();
         return end - start;
+    }
+
+    public static void main(String[] args) {
+        Random random = new Random();
+        for (int i = 0; i < 10; i++) {
+            System.out.println(random.nextBoolean());
+        }
     }
 }

@@ -27,6 +27,7 @@ public class QueryProperties {
     @Setter
     public static class QueryInfo {
         private List<String> related;
+        private List<String> exclustion;
         private List<String> author;
         private List<String> siteName;
         private List<String> urlMain;

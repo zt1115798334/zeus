@@ -5,7 +5,7 @@ startDate endDate 开始时间结束时间需要自己修改
 
 * 采集词获取文章到接口
   ---------------
-curl -X POST "http://localhost:8899/api/pull/pullArticleOfGatherRelatedWords" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "endDate=2021-08-08" -F "startDate=2021-08-08" -F "status=true" -F "storageMode=INTERFACE"
+curl -X POST "http://127.0.0.1:8899/api/pull/pullArticleOfGatherRelatedWords" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "endDate=2022-03-04" -F "startDate=2022-01-01" -F "status=true" -F "storageMode=INTERFACE"
 * 采集词获取文章到本地
   ---------------
 curl -X POST "http://localhost:8899/api/pull/pullArticleOfGatherRelatedWords" -H "accept: application/json" -H "Content-Type: multipart/form-data" -F "endDate=2021-08-08" -F "startDate=2021-08-08" -F "status=true" -F "storageMode=LOCAL"

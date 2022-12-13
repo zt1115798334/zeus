@@ -13,9 +13,11 @@ import com.zt.zeus.transfer.es.domain.EsArticle;
 import com.zt.zeus.transfer.es.service.EsArticleService;
 import com.zt.zeus.transfer.es.service.EsInterfaceService;
 import com.zt.zeus.transfer.properties.EsProperties;
+import com.zt.zeus.transfer.properties.QueryProperties;
 import com.zt.zeus.transfer.utils.ArticleUtils;
 import com.zt.zeus.transfer.utils.DateUtils;
 import com.zt.zeus.transfer.utils.EsParamsUtils;
+import com.zt.zeus.transfer.utils.MStringUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +47,7 @@ public class EsArticleServiceImpl implements EsArticleService {
 
     private final EsProperties esProperties;
 
+    private final QueryProperties queryProperties;
 
     private List<EsArticle> jsonToArticleList(JSONArray jsonArray) {
         return Optional.ofNullable(jsonArray)
@@ -112,6 +116,13 @@ public class EsArticleServiceImpl implements EsArticleService {
         if (Objects.equal(searchModel, SearchModel.RELATED_WORDS)) {
             if (Objects.equal(esProperties.getSearchType(), SearchType.EXACT)) {
                 params.putAll(EsParamsUtils.getQueryRelatedWordsParams(wordJa));
+                List<String> exclustionWrods = queryProperties.getRelatedQuery().getExclustion().stream().map(MStringUtils::splitMinGranularityStr)
+                        .flatMap(Collection::stream)
+                        .distinct().collect(Collectors.toList());
+                if (!exclustionWrods.isEmpty()) {
+                    JSONArray exclustionWrodJa = JSONArray.parseArray(JSONArray.toJSONString(exclustionWrods));
+                    params.putAll(EsParamsUtils.getQueryExclustionWordsParams(exclustionWrodJa));
+                }
             } else {
                 params.putAll(EsParamsUtils.getQuerySearchValueParams(wordJa));
             }

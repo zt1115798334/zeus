@@ -38,7 +38,7 @@ spring:
       name: admin #账号
       password: admin  #密码
   kafka:
-    bootstrap-servers: load.balance.com:8092
+    bootstrap-servers: load.balance.com:9290
     # 消费监听接口监听的主题不存在时，默认会报错
     listener:
       missing-topics-fatal: false
@@ -70,6 +70,11 @@ spring:
       # 指定消息key和消息体的编解码方式
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    security:
+      protocol: SASL_PLAINTEXT
+    properties:
+      sasl.mechanism: SCRAM-SHA-512
+      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username='tsgz' password='@@hesuan126';
 management:
   endpoints:
     web:

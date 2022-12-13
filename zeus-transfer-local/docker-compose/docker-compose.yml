@@ -2,7 +2,7 @@ version: '3'
 services:
   zeus-transfer-local:
     container_name: zeus-transfer-local
-    image: registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-transfer-local:latest
+    image: swr.cn-north-4.myhuaweicloud.com/zkdj_yuqing/zeus-transfer-local:latest
     ports:
       - '8899:8899'
 #    volumes:
@@ -12,6 +12,8 @@ services:
       - zeus-transfer/env/zeus-transfer.env
     depends_on:
       - mysql-zeus-transfer
+    extra_hosts:
+      - "load.balance.com:124.71.231.245"
   mysql-zeus-transfer:
     container_name: mysql-zeus-transfer
     image: mysql:8.0.23

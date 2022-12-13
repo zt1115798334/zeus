@@ -9,6 +9,8 @@ import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  *
@@ -25,11 +27,13 @@ public class EsProperties {
 
     private Integer pageSize;
 
+    private Integer maxPageNumber;
+
     private String filePath;
 
     private String version;
 
-    private String analysis;
+    private List<String> analysis;
 
     private SearchType searchType;
 

@@ -1,7 +1,6 @@
 package com.zt.zeus.transfer.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Objects;
 import com.google.common.util.concurrent.RateLimiter;
 import com.zt.zeus.transfer.analysis.service.AnalysisService;
@@ -9,7 +8,6 @@ import com.zt.zeus.transfer.custom.CustomPage;
 import com.zt.zeus.transfer.custom.RichParameters;
 import com.zt.zeus.transfer.dto.FileInfoDto;
 import com.zt.zeus.transfer.enums.Carrier;
-import com.zt.zeus.transfer.enums.Emotion;
 import com.zt.zeus.transfer.enums.StorageMode;
 import com.zt.zeus.transfer.es.domain.EsArticle;
 import com.zt.zeus.transfer.es.service.EsArticleService;
@@ -19,7 +17,6 @@ import com.zt.zeus.transfer.service.callable.SendInInterface;
 import com.zt.zeus.transfer.service.callable.WriteInLocal;
 import com.zt.zeus.transfer.utils.ArticleUtils;
 import com.zt.zeus.transfer.utils.DateUtils;
-import com.zt.zeus.transfer.utils.MD5Utils;
 import com.zt.zeus.transfer.utils.TheadUtils;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
@@ -80,19 +78,20 @@ public class PullServiceImpl implements PullService {
     public long pullEsArticleByDateRange(RichParameters richParameters, List<String> words,
                                          LocalDate startDate, LocalDate endDate) {
         String fromType = richParameters.getFromType();
-        ExecutorService executorService = Executors.newFixedThreadPool(3);
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
         JSONArray wordJa = JSONArray.parseArray(JSONArray.toJSONString(words));
         List<LocalDate> localDates = DateUtils.dateRangeList(startDate, endDate);
-        List<Future<Long>> collect = localDates.stream().map(localDate -> {
+        List<Future<Long>> collect = localDates.stream().sorted(Comparator.reverseOrder()).map(localDate -> {
             String mapKey = "day_" + fromType + "_" + DateUtils.formatDate(localDate);
             return executorService.submit(new PullArticleHandle(richParameters, esArticleService, analysisService, wordJa,
                     localDate.atTime(LocalTime.of(0, 0, 0)),
                     localDate.atTime(LocalTime.of(23, 59, 59)),
-                    esProperties.getPageSize(), mapKey, esProperties.getFilePath()));
+                    esProperties.getPageSize(), esProperties.getMaxPageNumber(), mapKey, esProperties.getFilePath()));
         }).collect(Collectors.toList());
         executorService.shutdown();
         return collect.stream().map(TheadUtils::getFutureLong).mapToLong(Long::longValue).sum();
     }
+
 
     /**
      * 时间范围查询
@@ -109,7 +108,7 @@ public class PullServiceImpl implements PullService {
         ExecutorService executorService = Executors.newFixedThreadPool(3);
         JSONArray wordJa = JSONArray.parseArray(JSONArray.toJSONString(words));
         String mapKey = "timeRange_" + fromType;
-        Future<Long> submit = executorService.submit(new PullArticleHandle(richParameters, esArticleService, analysisService, wordJa, startDateTime, endDateTime, esProperties.getPageSize(), mapKey, esProperties.getFilePath()));
+        Future<Long> submit = executorService.submit(new PullArticleHandle(richParameters, esArticleService, analysisService, wordJa, startDateTime, endDateTime, esProperties.getPageSize(), esProperties.getMaxPageNumber(), mapKey, esProperties.getFilePath()));
         executorService.shutdown();
         return TheadUtils.getFutureLong(submit);
     }
@@ -133,6 +132,8 @@ public class PullServiceImpl implements PullService {
 
         private final int pageSize;
 
+        private final int maxPageNumber;
+
         private final String mapKey;
 
         private final String filePath;
@@ -148,6 +149,12 @@ public class PullServiceImpl implements PullService {
 
             AtomicLong atomicLong = new AtomicLong();
             while (true) {
+                log.info("当前第{}页", atomicPage.get());
+                if (maxPageNumber > 0) {
+                    if (atomicPage.incrementAndGet() > maxPageNumber) {
+                        break;
+                    }
+                }
                 long runStart = System.currentTimeMillis();
                 long maxRequestTime = Long.MIN_VALUE;
                 long minRequestTime = Long.MAX_VALUE;
@@ -210,6 +217,7 @@ public class PullServiceImpl implements PullService {
                         totalRequestTime / articleSize,
                         maxRequestTime,
                         minRequestTime);
+
                 String collect = Arrays.stream(Carrier.values())
                         .map(carrier -> carrier.getName() + ": " + carrierMap.getOrDefault(String.valueOf(carrier.getCode()), 0L))
                         .collect(Collectors.joining(", "));
@@ -222,8 +230,10 @@ public class PullServiceImpl implements PullService {
     }
 
 
-
     public static void main(String[] args) {
-        System.out.println(MD5Utils.MD5("https://mp.weixin.qq.com/s?__biz=MTQzMTE0MjcyMQ==&mid=2666983584&idx=2&sn=f657c85890ac842b098bb846220c172c"));
+        LocalDate startDate = LocalDate.of(2022, 1, 1);
+        LocalDate endDate = LocalDate.now();
+        List<LocalDate> localDates = DateUtils.dateRangeList(startDate, endDate);
+        localDates.stream().sorted(Comparator.reverseOrder()).forEach(System.out::println);
     }
 }

@@ -103,6 +103,7 @@ public class HttpUtils {
     }
 
     public Optional<String> doPostForm(String uri, Map<String, String> headerMap, Map<String, Object> paramMap) {
+        log.info(uri);
         showHttpInfo(uri, headerMap, paramMap);
         Optional<String> result = Optional.empty();
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
@@ -252,11 +253,11 @@ public class HttpUtils {
     }
 
     private void showHttpInfo(String uri, Map<String, String> headerMap, Map<String, Object> paramMap) {
-        log.debug("请求信息，URL：{}, Headers：{},Params：{}, ", uri, headerMap, paramMap);
+//        log.info("请求信息，URL：{}, Headers：{},Params：{} ", uri, headerMap, paramMap);
     }
 
     private void showHttpInfo(String uri, Map<String, String> headerMap, String paramText) {
-        log.debug("请求信息，URL：{}, Headers：{},Params：{}, ", uri, headerMap, paramText);
+//        log.info("请求信息，URL：{}, Headers：{},Params：{}", uri, headerMap, paramText);
     }
 
     public static void main(String[] args) {

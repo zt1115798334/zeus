@@ -1,0 +1,3 @@
+#!/bin/bash
+docker build -t swr.cn-north-4.myhuaweicloud.com/zkdj_yuqing/zeus-transfer-local .
+docker push swr.cn-north-4.myhuaweicloud.com/zkdj_yuqing/zeus-transfer-local

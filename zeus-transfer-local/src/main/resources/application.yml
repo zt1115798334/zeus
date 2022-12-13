@@ -38,7 +38,7 @@ spring:
       name: admin #账号
       password: admin  #密码
   kafka:
-    bootstrap-servers: load.balance.com:8092
+    bootstrap-servers: load.balance.com:9290
     # 消费监听接口监听的主题不存在时，默认会报错
     listener:
       missing-topics-fatal: false
@@ -70,6 +70,11 @@ spring:
       # 指定消息key和消息体的编解码方式
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    security:
+      protocol: SASL_PLAINTEXT
+    properties:
+      sasl.mechanism: SCRAM-SHA-512
+      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username='chengdu-BD1' password='12345671';
 management:
   endpoints:
     web:
@@ -83,24 +88,26 @@ logging:
     name: /logs/${spring.application.name}/${spring.application.name}.log
 custom:
   query:
-    filter-word: 科协,科学技术
+    filter-word:
     related-query:
-      related:
+      related: D2809*(脱轨+列车+动车),D2809*(贵州+榕江站+贵阳),北京*疫情,上海*疫情,俄罗斯*乌克兰*冲突,俄乌冲突,俄乌局势,俄乌战争,俄乌战况,俄罗斯*乌克兰*局势,俄罗斯*乌克兰*战争,俄罗斯*乌克兰*战况,俄乌谈判,俄罗斯*乌克兰*谈判,3月21日东航客机事故,东航*(坠机+坠毁+事故),(巴基斯坦+卡拉奇)*3名中国公民*(身亡+死亡+遇难)
+      exclustion: 电影,奶茶,体育,文化节,粉丝,老鼠,宠物,基金,投资,美股,票务,近景,远景,日景,夜景,雪景,抖音购物,蓝天白云,革命先烈,房屋租金,租房,萤火虫,购车
       carrier:
     author-query:
       author:
       carrier:
   es:
     version: 5
-    page-size: ${CUSTOM_ES_PAGE_SIZE:500}
-    file-path: ${CUSTOM_ES_FILE_PATH:/word}
+    page-size: ${CUSTOM_ES_PAGE_SIZE:1000}
+    max-page-number: -1
+    file-path: ${CUSTOM_ES_FILE_PATH:E:/北京武警学院数据/2022-03-08/8/}
     read-model: ${CUSTOM_ES_READ_MODEL:File}
-    analysis: ${CUSTOM_ES_ANALYSIS:http://127.0.0.1:8081}
+    analysis: ${CUSTOM_ES_ANALYSIS:http://192.168.199.241:8080}
     search-type: ${CUSTOM_ES_SEARCH_TYPE:EXACT}
     search-range: PUBLISH_TIME
     es5: #es配置信息
       #      key: yq_test
-      key: ${CUSTOM_ES_ES5_KEY:yq_zkdj}
+      key: ${CUSTOM_ES_ES5_KEY:yq_ztjy}
       host: ${CUSTOM_ES_ES5_HOST:http://river.junquan.com.cn}
       app-id: 1231231
       full-query: ${CUSTOM_ES_ES5_FULL_QUERY:/river/river/dataQuery}
@@ -116,6 +123,6 @@ custom:
     #    true 开启  false 关闭
     state: ${CUSTOM_QUARTZ_STATE:false}
   kafka:
-    topic: shenyangwangxinban
+    topic: chengduBD1
 
 

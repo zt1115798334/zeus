@@ -25,6 +25,8 @@ public class EsParamsUtils {
     public static final String ES_CREATE_START_TIME = "create_start_time"; //开始时间
     public static final String ES_CREATE_END_TIME = "create_end_time"; //结束时间
     private static final String ES_RELATED_WORDS = "relatedWords"; //相关词
+    private static final String ES_EXCLUSION_WORDS = "unrelated"; //排除词
+
     public static final String ES_THESAURUS_THEME_IDS = "yuqing"; //主题id
     public static final String ES_URL_MAIL = "urlMain";
     public static final String CARRIE = "carrie";
@@ -48,6 +50,11 @@ public class EsParamsUtils {
     public static JSONObject getQueryRelatedWordsParams(JSONArray related) {
         JSONObject csJo = new JSONObject();
         csJo.put(ES_RELATED_WORDS, JSONObject.parseArray(related.toJSONString(), String.class));
+        return csJo;
+    }
+    public static JSONObject getQueryExclustionWordsParams(JSONArray related) {
+        JSONObject csJo = new JSONObject();
+        csJo.put(ES_EXCLUSION_WORDS, JSONObject.parseArray(related.toJSONString(), String.class));
         return csJo;
     }
 

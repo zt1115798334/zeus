@@ -16,9 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
@@ -115,34 +117,42 @@ public class PushServiceImpl implements PushService {
     public void readFileContent() {
         final ExecutorService executorServiceReadSendFile = Executors.newFixedThreadPool(15);
         log.info("开始获取文件啦！！");
-        FileUtils txt = new FileUtils(esProperties.getFilePath(), "");
-        txt.File();
-        List<File> fileList = txt.getFileList().stream().filter(Objects::nonNull).collect(Collectors.toList());
-        fileSize = fileList.size();
-        log.info("文件总数为：" + fileSize);
-        AtomicInteger atomicInteger = new AtomicInteger();
-
+//        FileUtils txt = new FileUtils(esProperties.getFilePath(), "");
+//        txt.File();
+//        List<File> fileList =txt.getFileList().stream().filter(Objects::nonNull).collect(Collectors.toList());
         try {
-            for (File file : fileList) {
-                Future<FileInfoDto> submit = executorServiceReadSendFile.submit(new ReadFile(file));
-                queueRead.add(submit.get());
-                int i = atomicInteger.incrementAndGet();
-                log.info("文件总数为：{}，当前获取到第{}个，完成度：{}%", fileSize, i, percentage(fileSize, i));
-                Thread.sleep(100);
+            List<File> fileList = Files.walk(Paths.get(esProperties.getFilePath()), 2)
+                    .filter(p->!Files.isDirectory(p))
+                    .map(Path::toFile)
+                    .collect(Collectors.toList());
+            fileSize = fileList.size();
+            log.info("文件总数为：" + fileSize);
+            AtomicInteger atomicInteger = new AtomicInteger();
+
+            try {
+                for (File file : fileList) {
+                    Future<FileInfoDto> submit = executorServiceReadSendFile.submit(new ReadFile(file));
+                    queueRead.add(submit.get());
+                    int i = atomicInteger.incrementAndGet();
+                    log.info("文件总数为：{}，当前获取到第{}个，完成度：{}%", fileSize, i, percentage(fileSize, i));
+                    Thread.sleep(100);
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
-        } catch (InterruptedException | ExecutionException e) {
+
+            executorServiceReadSendFile.shutdown();
+            while (true) {
+                if (!executorServiceReadSendFile.isTerminated()) {
+                    System.out.println("readFileContent的子线程都结束了！");
+                    break;
+                }
+            }
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        executorServiceReadSendFile.shutdown();
-        while (true) {
-            if (!executorServiceReadSendFile.isTerminated()) {
-                System.out.println("readFileContent的子线程都结束了！");
-                break;
-            }
-        }
     }
-
     public void sendFileContent() {
         RateLimiter rateLimiter = RateLimiter.create(100);
         final ExecutorService executorServiceReadSendFile = Executors.newFixedThreadPool(15);

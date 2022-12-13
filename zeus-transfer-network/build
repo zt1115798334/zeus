@@ -1,0 +1,5 @@
+#!/bin/bash
+#docker build -t swr.cn-north-4.myhuaweicloud.com/zkdj_yuqing/zeus-transfer-network .
+#docker push swr.cn-north-4.myhuaweicloud.com/zkdj_yuqing/zeus-transfer-network
+docker build -t registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-transfer-network .
+docker push registry.cn-hangzhou.aliyuncs.com/zt_images/zeus-transfer-network
