@@ -253,11 +253,12 @@ public class HttpUtils {
     }
 
     private void showHttpInfo(String uri, Map<String, String> headerMap, Map<String, Object> paramMap) {
+        log.info("请求信息，URL：{}, Headers：{},Params：{} ", uri, headerMap, paramMap);
 //        log.info("请求信息，URL：{}, Headers：{},Params：{} ", uri, headerMap, paramMap);
     }
 
     private void showHttpInfo(String uri, Map<String, String> headerMap, String paramText) {
-//        log.info("请求信息，URL：{}, Headers：{},Params：{}", uri, headerMap, paramText);
+        log.info("请求信息，URL：{}, Headers：{},Params：{}", uri, headerMap, paramText);
     }
 
     public static void main(String[] args) {

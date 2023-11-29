@@ -20,7 +20,7 @@ public class SendInInterface  implements Callable<Long> {
     @Override
     public Long call() {
         long start = System.currentTimeMillis();
-        rateLimiter.acquire();
+//        rateLimiter.acquire();
         analysisService.analysis(fileInfoDto.getContent(), fileInfoDto.getFilename());
         long end = System.currentTimeMillis();
         return end - start;

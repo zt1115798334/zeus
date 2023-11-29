@@ -37,10 +37,10 @@ public class KafkaConsumerListener {
 
     final RateLimiter rateLimiter = RateLimiter.create(50, 1, NANOSECONDS);
 
-    @KafkaListener(topics = {"${custom.kafka.topic}"})
+    @KafkaListener(topics = "#{'${custom.kafka.topic:test}'.split(',')}")
     public void onMessage(List<ConsumerRecord<String, String>> records, Acknowledgment ack) {
-        ExecutorService executorService = Executors.newFixedThreadPool(SysConst.AVAILABLE_PROCESSORS >> 1);
         log.info("获取数据条数=" + records.size());
+        ExecutorService executorService = Executors.newFixedThreadPool(SysConst.AVAILABLE_PROCESSORS >> 1);
         try {
             for (ConsumerRecord<String, String> record : records) {
                 EsArticle esArticle = ArticleUtils.jsonObjectConvertEsArticle(JSONObject.parseObject(record.value()));
@@ -48,7 +48,6 @@ public class KafkaConsumerListener {
                 FileInfoDto fileInfoDto = FileInfoDto.builder().filename(esArticle.getId()).content(ArticleUtils.getArticleJson(esArticle)).build();
                 executorService.submit(new SendInInterface(rateLimiter, analysisService, fileInfoDto));
             }
-
         } catch (Exception e) {
             log.info("{}", e.getMessage());
         } finally {

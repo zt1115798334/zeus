@@ -5,7 +5,7 @@ spring:
     name: zeus-transfer-local
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://${SPRING_DATASOURCE_URL:127.0.0.1}:3306/pull-push?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&&serverTimezone=UTC
+    url: jdbc:mysql://${SPRING_DATASOURCE_URL:127.0.0.1}:3306/zeus-transfer?characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true&&serverTimezone=UTC
     username: ${SPRING_DATASOURCE_USERNAME:root}
     password: ${SPRING_DATASOURCE_PASSWORD:root}
     hikari:
@@ -60,13 +60,16 @@ spring:
       #buffer-memory: 33554432
     consumer:
       # 指定默认消费者group id --> 由于在kafka中，同一组中的consumer不会读取到同一个消息，依靠groud.id设置组名
-      group-id: zeusGroup
+      group-id: chengdubudui-zeusGroup
       # smallest和largest才有效，如果smallest重新0开始读取，如果是largest从logfile的offset读取。一般情况下我们都是设置smallest
       auto-offset-reset: earliest
       # enable.auto.commit:true --> 设置自动提交offset
       enable-auto-commit: false
       #如果enable.auto.commit为true，则消费者偏移自动提交给Kafka的频率（以毫秒为单位），默认值为5000。
       auto-commit-interval: 100
+#      max.poll.records: 300
+#      session.timeout.ms: 600000
+#      request.timeout.ms: 600000
       # 指定消息key和消息体的编解码方式
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -74,7 +77,7 @@ spring:
       protocol: SASL_PLAINTEXT
     properties:
       sasl.mechanism: SCRAM-SHA-512
-      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username='chengdu-BD1' password='12345671';
+      sasl.jaas.config: org.apache.kafka.common.security.scram.ScramLoginModule required username='chengdubudui' password='1234567';
 management:
   endpoints:
     web:
@@ -123,6 +126,6 @@ custom:
     #    true 开启  false 关闭
     state: ${CUSTOM_QUARTZ_STATE:false}
   kafka:
-    topic: chengduBD1
+    topic: chengdubudui
 
 

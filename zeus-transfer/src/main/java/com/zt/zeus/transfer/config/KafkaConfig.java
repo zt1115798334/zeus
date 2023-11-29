@@ -27,5 +27,6 @@ public class KafkaConfig {
         factory.setBatchListener(true);//设置为批量消费，每个批次数量在Kafka配置参数中设置
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);//设置手动提交ackMode
         return factory;
+
     }
 }
