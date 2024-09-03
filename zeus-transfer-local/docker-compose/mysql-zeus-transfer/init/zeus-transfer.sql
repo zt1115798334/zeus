@@ -1,26 +1,3 @@
-create table t_author
-(
-    id           bigint auto_increment
-        primary key,
-    authorName   varchar(255)                       not null,
-    created_time datetime default CURRENT_TIMESTAMP not null
-);
-
-create table t_gather
-(
-    id          int auto_increment
-        primary key,
-    name        varchar(255) not null,
-    word_id     varchar(255) not null,
-    user_ids    varchar(500) not null,
-    user_count  int          not null,
-    type        int          not null comment '境内0；境外1；短视频2；全部信源3',
-    create_time datetime     not null,
-    modify_time datetime null,
-    sync_time   datetime null,
-    status      tinyint(1) not null comment '启用状态1；禁用状态0',
-    mark        tinyint(1) default 0 not null comment '更新节点标志位'
-) charset = utf8;
 
 
 INSERT INTO t_author(authorName) VALUES ('教育之江');

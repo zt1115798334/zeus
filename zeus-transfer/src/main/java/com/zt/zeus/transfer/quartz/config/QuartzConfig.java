@@ -60,11 +60,36 @@ public class QuartzConfig {
         return jobDetail;
     }
 
+    @Bean(name = "syncPullArticleOfCustomSiteNameJobDetail")
+    public MethodInvokingJobDetailFactoryBean syncPullArticleOfCustomSiteNameJobDetail(SyncPullArticleOfCustomSiteNameJob syncPullArticleOfCustomSiteNameJob) {
+        MethodInvokingJobDetailFactoryBean jobDetail = new MethodInvokingJobDetailFactoryBean();
+        // 是否并发执行
+        jobDetail.setConcurrent(false);
+        // 为需要执行的实体类对应的对象
+        jobDetail.setTargetObject(syncPullArticleOfCustomSiteNameJob);
+        // 需要执行的方法
+        jobDetail.setTargetMethod("execute");
+        return jobDetail;
+    }
+
     @Bean(name = "syncPullArticleOfCustomWordTrigger")
     public CronTriggerFactoryBean syncPullArticleOfCustomWordTrigger(JobDetail syncPullArticleOfCustomWordJobDetail) {
         CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
         // 设置jobDetail
         cronTriggerFactoryBean.setJobDetail(syncPullArticleOfCustomWordJobDetail);
+        //秒 分 小时 日 月 星期 年  每10分钟
+        cronTriggerFactoryBean.setCronExpression(quartzProperties.getCorn());//"0 0/30 * * * ?"
+        //trigger超时处理策略 默认1：总是会执行头一次 2:不处理
+        cronTriggerFactoryBean.setMisfireInstruction(2);
+        return cronTriggerFactoryBean;
+    }
+
+
+    @Bean(name = "syncPullArticleOfCustomSiteNameTrigger")
+    public CronTriggerFactoryBean syncPullArticleOfCustomSiteNameTrigger(JobDetail syncPullArticleOfCustomSiteNameJobDetail) {
+        CronTriggerFactoryBean cronTriggerFactoryBean = new CronTriggerFactoryBean();
+        // 设置jobDetail
+        cronTriggerFactoryBean.setJobDetail(syncPullArticleOfCustomSiteNameJobDetail);
         //秒 分 小时 日 月 星期 年  每10分钟
         cronTriggerFactoryBean.setCronExpression(quartzProperties.getCorn());//"0 0/30 * * * ?"
         //trigger超时处理策略 默认1：总是会执行头一次 2:不处理
@@ -151,6 +176,7 @@ public class QuartzConfig {
     public SchedulerFactoryBean schedulerFactory(
             Trigger syncPullArticleOfCustomAuthorTrigger,
             Trigger syncPullArticleOfCustomWordTrigger,
+            Trigger syncPullArticleOfCustomSiteNameTrigger,
             Trigger syncPullArticleOfGatherAuthorTrigger,
             Trigger syncPullArticleOfGatherWordTrigger,
             Trigger syncPushArticleTrigger) {
@@ -166,6 +192,9 @@ public class QuartzConfig {
             }
             if (jobType.contains(JobType.CUSTOM_WORD)) {
                 triggerList.add(syncPullArticleOfCustomWordTrigger);
+            }
+            if (jobType.contains(JobType.CUSTOM_SITE_NAME)) {
+                triggerList.add(syncPullArticleOfCustomSiteNameTrigger);
             }
             if (jobType.contains(JobType.GATHER_AUTHOR)) {
                 triggerList.add(syncPullArticleOfGatherAuthorTrigger);

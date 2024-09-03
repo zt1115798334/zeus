@@ -50,4 +50,11 @@ public class EsInterfaceServiceImpl implements EsInterfaceService {
         String url = splicingUrlFull(pageSize).toString();
         return HttpUtils.getInstance().doPostJSON(url, params.getInnerMap()).orElse("");
     }
+
+    public static void main(String[] args) {
+        long time = System.currentTimeMillis() / 1000;// 秒
+        String token = MD5Utils.generateToken("yq_ztjy", time);
+        System.out.println(time);
+        System.out.println(token);
+    }
 }
