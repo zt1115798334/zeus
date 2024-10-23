@@ -110,7 +110,7 @@ custom:
     search-range: PUBLISH_TIME
     es5: #es配置信息
       #      key: yq_test
-      key: ${CUSTOM_ES_ES5_KEY:yq_ztjy}
+      key: ${CUSTOM_ES_ES5_KEY:yq_test}
       host: ${CUSTOM_ES_ES5_HOST:http://river.junquan.com.cn}
       app-id: 1231231
       full-query: ${CUSTOM_ES_ES5_FULL_QUERY:/river/river/dataQuery}
